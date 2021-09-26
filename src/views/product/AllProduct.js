@@ -21,6 +21,7 @@ import CIcon from '@coreui/icons-react'
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
 import {searchFilter} from "../../utils/filterHelper";
 import {FaPencilAlt, FaTrashAlt} from "react-icons/all";
+import {subscribeToChat} from "../../utils/socketHelper";
 
 const AllProduct = (props) => {
   const history = useHistory()
@@ -39,6 +40,7 @@ const AllProduct = (props) => {
 
   useEffect(()=>{
     props.loadAllProduct()
+    subscribeToChat()
   },[])
 
   return(
@@ -71,6 +73,8 @@ const AllProduct = (props) => {
             fields={fields}
             itemsPerPage={10}
             pagination
+            sorter
+            loading={props.loading}
             scopedSlots = {{
               'stock':
                 (item)=>(
@@ -100,7 +104,8 @@ const AllProduct = (props) => {
 const mapStateToProps = (state) => {
   console.log('STATE, ',state)
   return{
-    products: state.product.products
+    products: state.product.products,
+    loading: state.product.loading
   }
 }
 export default connect(mapStateToProps, productDispatch)(AllProduct)

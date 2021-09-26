@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component, useEffect} from 'react';
 import {HashRouter, BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import './scss/style.scss';
 import {useSelector} from "react-redux";
+import {initiateSocket, subscribeToChat} from "./utils/socketHelper";
 
 const loading = (
   <div className="pt-3 text-center">
@@ -19,6 +20,9 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 
 const App = ()=> {
+  useEffect(()=>{
+    initiateSocket()
+  },[])
   const isLogin = useSelector(state => state.user.user)
   // render() {
     return (

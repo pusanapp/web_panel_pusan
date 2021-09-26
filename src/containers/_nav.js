@@ -61,7 +61,7 @@ const _nav =  [
   {
     _tag: 'CSidebarNavDropdown',
     name: 'Master',
-    route: '/pusan',
+    route: '/master',
     icon: <FaTools className="c-sidebar-nav-icon"/>,
     _children: [
       {
@@ -85,18 +85,18 @@ const _nav =  [
   //   _tag: 'CSidebarNavTitle',
   //   _children: ['Theme']
   // },
-  {
-    _tag: 'CSidebarNavItem',
-    name: 'Colors',
-    to: '/theme/colors',
-    icon: 'cil-drop',
-  },
-  {
-    _tag: 'CSidebarNavItem',
-    name: 'Typography',
-    to: '/theme/typography',
-    icon: 'cil-pencil',
-  },
+  // {
+  //   _tag: 'CSidebarNavItem',
+  //   name: 'Colors',
+  //   to: '/theme/colors',
+  //   icon: 'cil-drop',
+  // },
+  // {
+  //   _tag: 'CSidebarNavItem',
+  //   name: 'Typography',
+  //   to: '/theme/typography',
+  //   icon: 'cil-pencil',
+  // },
   {
     _tag: 'CSidebarNavTitle',
     _children: ['Components']
