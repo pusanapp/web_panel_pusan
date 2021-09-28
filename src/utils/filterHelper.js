@@ -6,9 +6,12 @@ export const searchFilter = (data,params,query)=>{
 }
 
 export const groupFilter = (data, params, query)=>{
-    const final = data.filter((a) => {
-        return a[params] === query
+  console.log('data, ', data)
+  console.log('query, ', parseInt(query))
+  const final = data.filter((a) => {
+        return a[params] === parseInt(query)
     })
+  console.log('filter, ', final)
     return query? final : data
 }
 

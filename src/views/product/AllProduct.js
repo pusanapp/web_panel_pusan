@@ -49,7 +49,7 @@ const AllProduct = (props) => {
 
       <CCard>
         <CCardHeader>
-          All Products
+          Semua Produk
         </CCardHeader>
         <CCardBody>
           <CCol>
@@ -62,8 +62,8 @@ const AllProduct = (props) => {
                 </CRow>
               </CCol>
               <div>
-                <CButton color="primary" size={'md'}onClick={()=>history.push('/theme/colors')}>
-                  Add New Product
+                <CButton color="primary" size={'md'}onClick={()=>history.push('/pusan/products/add')}>
+                  Tambah Produk Baru
                 </CButton>
               </div>
             </CRow>

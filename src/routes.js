@@ -1,4 +1,8 @@
 import React from 'react';
+import AllProduct from "./views/product/AllProduct";
+// import AddProductPage from "./views/product/AddProductPage";
+// import ProductType from "./views/master/ProductType";
+// import AddProductType from "./views/master/AddProductType";
 
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Tables = React.lazy(() => import('./views/base/tables/Tables'));
@@ -37,9 +41,10 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const Users = React.lazy(() => import('./views/users/Users'));
 const User = React.lazy(() => import('./views/users/User'));
-const AllProduct = React.lazy(() => import('./views/product/AllProduct'))
-const ProductType = React.lazy(()=>import('./views/master/type/ProductType'))
-const AddProductType = React.lazy(()=>import('./views/master/type/AddProductType'))
+// const AllProduct = React.lazy(() => import('./views/product/AllProduct'))
+const ProductType = React.lazy(()=>import('./views/master/ProductType'))
+const AddProductType = React.lazy(()=>import('./views/master/AddProductType'))
+const AddProductPage = React.lazy(()=>import('./views/product/AddProductPage'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
@@ -81,8 +86,9 @@ const routes = [
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/users', exact: true,  name: 'Users', component: Users },
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
-  { path: '/pusan/products', exact: true, name: 'All Product', component: AllProduct },
-  { path: '/master/product-type', exact: true, name: 'Jenis Produk', component: ProductType },
+  { path: '/pusan/products', exact: true, name: 'Semua Produk', component: AllProduct },
+  { path: '/pusan/products/add', exact: true, name: 'Tambah Produk Baru', component: AddProductPage },
+  { path: '/master/all', exact: true, name: 'Master Produk', component: ProductType },
   { path: '/master/product-type/add', exact: true, name: 'Tambah Jenis Produk', component: AddProductType }
 ];
 

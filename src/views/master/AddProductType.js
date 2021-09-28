@@ -13,9 +13,9 @@ import {
   CRow
 } from "@coreui/react";
 import {useHistory} from "react-router-dom";
-import {masterDispatch} from "../redux/masterRedux";
+import {masterDispatch} from "./redux/masterRedux";
 import {Redirect} from "react-router-dom";
-import LoadingDialog from "../../../reusable/dialogs/LoadingDialog";
+import LoadingDialog from "../../reusable/dialogs/LoadingDialog";
 const AddProductType = (props) => {
   // console.log(props.location.state.type[0])
   const [name, setName] = useState('')

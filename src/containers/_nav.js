@@ -59,28 +59,34 @@ const _nav =  [
     ]
   },
   {
-    _tag: 'CSidebarNavDropdown',
+    _tag: 'CSidebarNavItem',
     name: 'Master',
-    route: '/master',
+    to: '/master/all',
     icon: <FaTools className="c-sidebar-nav-icon"/>,
-    _children: [
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Jenis Produk',
-        to: '/master/product-type',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Kategori Produk',
-        to: '/master/category',
-      },
-      {
-        _tag: 'CSidebarNavItem',
-        name: 'Merk Produk',
-        to: '/master/product-type/brand',
-      },
-    ]
   },
+  // {
+  //   _tag: 'CSidebarNavDropdown',
+  //   name: 'Master',
+  //   route: '/master',
+  //   icon: <FaTools className="c-sidebar-nav-icon"/>,
+  //   _children: [
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Jenis Produk',
+  //       to: '/master/all',
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Kategori Produk',
+  //       to: '/master/category',
+  //     },
+  //     {
+  //       _tag: 'CSidebarNavItem',
+  //       name: 'Merk Produk',
+  //       to: '/master/product-type/brand',
+  //     },
+  //   ]
+  // },
   // {
   //   _tag: 'CSidebarNavTitle',
   //   _children: ['Theme']
