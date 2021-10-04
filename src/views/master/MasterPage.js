@@ -19,10 +19,15 @@ import {FaPencilAlt, FaTrashAlt} from "react-icons/all";
 import {useHistory} from "react-router-dom";
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
 
-const ProductType = (props) => {
+const MasterPage = (props) => {
   const history = useHistory()
   const [deleteVisibility, setDeleteVisibility] = useState(false)
+  const [deleteCategoryVisibility, setDeleteCategoryVisibility] = useState(false)
+  const [deleteBrandVisibility, setDeleteBrandVisibility] = useState(false)
+
   const [deletedId, setDeletedId] = useState(-1)
+  const [deletedCategoryId, setDeletedCategoryId] = useState(-1)
+  const [deletedBrandId, setDeletedBrandId] = useState(-1)
   const showDeleteDialog = (id)=>{
     setDeleteVisibility(true)
     setDeletedId(id)
@@ -31,10 +36,36 @@ const ProductType = (props) => {
     setDeleteVisibility(false)
     setDeletedId(-1)
   }
+  const showDeleteBrandDialog = (id)=>{
+    setDeleteBrandVisibility(true)
+    setDeletedBrandId(id)
+  }
+  const hideDeleteBrandDialog = ()=>{
+    setDeleteBrandVisibility(false)
+    setDeletedBrandId(-1)
+  }
+  const showDeleteCategoryDialog = (id)=>{
+    setDeleteCategoryVisibility(true)
+    setDeletedCategoryId(id)
+  }
+  const hideDeleteCategoryDialog = ()=>{
+    setDeleteCategoryVisibility(false)
+    setDeletedCategoryId(-1)
+  }
   const deleteType = () =>{
     console.log('delete')
     props.deleteProductType(deletedId)
     hideDeleteDialog()
+  }
+  const deleteCategory = () =>{
+    console.log('delete')
+    props.deleteProductCategory(deletedCategoryId)
+    hideDeleteCategoryDialog()
+  }
+  const deleteBrand = () =>{
+    console.log('delete')
+    props.deleteProductBrand(deletedBrandId)
+    hideDeleteBrandDialog()
   }
   useEffect(()=>{
     props.loadProductType()
@@ -67,8 +98,8 @@ const ProductType = (props) => {
   return(
     <>
       <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"jenis produk"} onDelete={deleteType}/>
-      {/*<DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"jenis produk"} onDelete={deleteType}/>*/}
-      {/*<DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"jenis produk"} onDelete={deleteType}/>*/}
+      <DeleteDialog show={deleteCategoryVisibility} onHide={hideDeleteCategoryDialog} item={"kategori produk"} onDelete={deleteCategory}/>
+      <DeleteDialog show={deleteBrandVisibility} onHide={hideDeleteBrandDialog} item={"merek produk"} onDelete={deleteBrand}/>
       <CRow>
         <CCol xs="12" lg="6">
           <CCard>
@@ -149,7 +180,7 @@ const ProductType = (props) => {
                     </CRow>
                   </CCol>
                   <div>
-                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-type/add')}>
+                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-category/add')}>
                       Tambah Kategori
                     </CButton>
                   </div>
@@ -184,7 +215,7 @@ const ProductType = (props) => {
                       <FaPencilAlt color="green"/>
                     </span>
                       </Link>
-                      <a className='ml-3' onClick={()=>showDeleteDialog(item.id)}>
+                      <a className='ml-3' onClick={()=>showDeleteCategoryDialog(item.id)}>
                         <span><FaTrashAlt color="red"/></span>
                       </a>
                     </td>
@@ -218,7 +249,7 @@ const ProductType = (props) => {
                     </CRow>
                   </CCol>
                   <div>
-                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-type/add')}>
+                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-brand/add')}>
                       Tambah Merk
                     </CButton>
                   </div>
@@ -248,7 +279,7 @@ const ProductType = (props) => {
                       <FaPencilAlt color="green"/>
                     </span>
                       </Link>
-                      <a className='ml-3' onClick={()=>showDeleteDialog(item.id)}>
+                      <a className='ml-3' onClick={()=>showDeleteBrandDialog(item.id)}>
                         <span><FaTrashAlt color="red"/></span>
                       </a>
                     </td>
@@ -279,4 +310,4 @@ const mapStateToProps = (state) =>{
     brands: state.master.brands
   }
 }
-export default connect(mapStateToProps, masterDispatch)(ProductType)
+export default connect(mapStateToProps, masterDispatch)(MasterPage)

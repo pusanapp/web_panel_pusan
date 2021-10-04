@@ -21,61 +21,93 @@ import {masterDispatch} from "../master/redux/masterRedux";
 import {productDispatch} from "./redux/productRedux";
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
 import {groupFilter} from "../../utils/filterHelper";
+import {Redirect} from "react-router-dom";
+import LoadingDialog from "../../reusable/dialogs/LoadingDialog";
 
 const AddProductPage = (props) => {
   const dispatch = useDispatch()
   const hiddenFileInput = React.useRef(null);
-  const [value, setValue] = useState('');
   const [image, setImage] = useState([])
-  const [hafara, setHafara] = useState({
-    pid: 1667,
-    kode_barang: "",
-    nama_barang: "",
-    merk: "",
-    jenis_barang: "",
-    kategori_barang: "",
-    harga_pokok: "",
-    harga_jual_umum: "",
-    harga_jual_reseller: "",
-    harga_jual_grosir: "",
-    harga_spesial: "",
-    // grosir: 6,
-    stock: 6,
-    status: 1,
-    company: "HAFARA",
-    deskripsi: "",
-    spesifikasi: "",
-    // weight: 0,
-    keyword: "",
-    thumbnail: ""
-  })
+  const [video, setVideo] = useState('')
+  const [hafara, setHafara] = useState({})
   const [productTypeId, setProductTypeId] = useState(0)
   const [categoryId, setCategoryId] = useState(0)
+  const [brandId, setBrandId] = useState(0)
+  const [name, setName] = useState('')
+  const [code, setCode] = useState('')
+  const [brand, setBrand] = useState('')
+  const [type, setType] = useState('')
+  const [category, setCategory] = useState('')
+  const [price, setPrice] = useState('')
+  const [discountPrice, setDiscountPrice] = useState(0)
+  const [grosir, setGrosir] = useState(hafara.grosir)
+  const [grosirPrice, setGrosirPrice] = useState('')
+  const [weight, setWeight] = useState('')
+  const [description, setDescription] = useState('')
+  const [detail, setDetail] = useState('')
+  const [specification, setSpecification] = useState('')
 
+  const onChangeName = (event) => {
+    setName(event.target.value)
+  }
+  const onChangeCode = (event) => {
+    setCode(event.target.value)
+  }
+  const onChangePrice = (event) => {
+    setPrice(event.target.value)
+  }
+  const onChangeDiscountPrice = (event) => {
+    setDiscountPrice(event.target.value)
+  }
+  const onChangeGrosir = (event) => {
+    setGrosir(event.target.value)
+  }
+  const onChangeGrosirPrice = (event) =>{
+    setGrosirPrice(event.target.value)
+  }
+  const onChangeWeight = (event) => {
+    setWeight(event.target.value)
+  }
+  const onChangeBrand = (event)=>{
+    const split = event.target.value.split('|')
+    setBrand(split[1])
+    setBrandId(split[0])
+  }
   const onchangeProductType = (event) => {
-    setProductTypeId(event.target.value.split('|')[0])
+    const split = event.target.value.split('|')
+    setProductTypeId(split[0])
+    setType(split[1])
   }
   const onchangeCategory = (event) => {
-    setCategoryId(event.target.value.split('|')[0])
+    const split = event.target.value.split('|')
+    setCategoryId(split[0])
+    setCategory(split[1])
   }
-
-  const onValueChange = (value)=> {
-    console.log(value)
-    setValue(value)
+  const onChangeDescription = (value) => {
+    setDescription(value)
+  }
+  const onChangeSpecification = (value) => {
+    setSpecification(value)
+  }
+  const onChangeDetail = (value) => {
+    setDetail(value)
+  }
+  const onChangeVideos = (event) => {
+    setVideo(event.target.value)
   }
 
   const options = []
-  props.hafara.map(data=>{
+  props.hafara.map(data => {
     const added = {value: data, label: data.nama_barang}
     options.push(added)
   })
 
-  const onSelectProductChange = (option) =>{
+  const onSelectProductChange = (option) => {
     console.log(option.value)
     setHafara(option.value)
   }
-
   const handleClick = event => {
     hiddenFileInput.current.click();
   };
@@ -91,14 +123,68 @@ const AddProductPage = (props) => {
     console.log(image)
     setImage([...image])
   };
-  useEffect(()=>{
+
+  const submitData = () => {
+    const images = new FormData()
+    image.map(data => {
+      images.append('images', data)
+    })
+    const videos = []
+    // console.log(video)
+    const split = video.split(';')
+    console.log(split)
+    split.map(url=>{
+      const data = {
+        url: url
+      }
+      videos.push(data)
+    })
+    const product = {
+      data: {
+        name: name? name : hafara.nama_barang,
+        code: code? code : hafara.kode_barang,
+        brand: brand,
+        barang_id: parseInt(hafara.pid),
+        type: type,
+        category: category,
+        price: price? parseInt(price) : parseInt(hafara.harga_jual_umum),
+        grosir_price: grosirPrice? parseInt(grosirPrice) : parseInt(hafara.harga_jual_grosir),
+        grosir: grosir? parseInt(grosir) : parseInt(hafara.grosir),
+        weight: weight? parseInt(weight) : parseInt(hafara.weight),
+        description: description,
+        detail: detail,
+        specification: specification,
+        // keyword: hafara.keyword,
+        status: 1,
+        is_new: 1,
+        is_favorite: 1,
+        discount_price: discountPrice,
+        category_id: parseInt(categoryId),
+        type_id: parseInt(productTypeId),
+        brand_id: parseInt(brandId)
+      },
+      videos: videos
+    }
+    const payload = {
+      product: product,
+      images: images
+    }
+    console.log(payload)
+    props.saveNewProduct(payload)
+  }
+  useEffect(() => {
     dispatch(masterDispatch.loadProductCategory())
     dispatch(masterDispatch.loadProductType())
     dispatch(masterDispatch.loadProductBrand())
     props.loadHafaraProduct()
-  },[])
+  }, [])
   return (
+
     <>
+      <LoadingDialog show={props.loading}/>
+      {props.status ? (
+      <Redirect to="/pusan/products"/>
+    ) : (
       <CCard>
         <CCardBody>
           <CRow>
@@ -109,37 +195,41 @@ const AddProductPage = (props) => {
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Nama Produk</CLabel>
-                <CInput id="name" placeholder="Masukkan Nama Produk" defaultValue={hafara.nama_barang} required/>
+                <CInput id="name" placeholder="Masukkan Nama Produk" defaultValue={hafara.nama_barang} onChange={onChangeName} required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Kode</CLabel>
-                <CInput id="name" placeholder="Masukkan Kode Produk" defaultValue={hafara.kode_barang} required/>
+                <CInput id="name" placeholder="Masukkan Kode Produk" defaultValue={hafara.kode_barang} onChange={onChangeCode} required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Harga</CLabel>
-                <CInput id="name" placeholder="Masukkan Harga Produk" defaultValue={hafara.harga_jual_umum} required/>
+                <CInput id="name" placeholder="Masukkan Harga Produk" defaultValue={hafara.harga_jual_umum} onChange={onChangePrice} required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Harga Grosir</CLabel>
-                <CInput id="name" placeholder="Masukkan Harga Grosir" defaultValue={hafara.harga_jual_grosir} required/>
+                <CInput id="name" placeholder="Masukkan Harga Grosir" defaultValue={hafara.harga_jual_grosir} onChange={onChangeGrosirPrice}required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Jumlah Grosir</CLabel>
-                <CInput id="name" type="number" placeholder="Masukkan Jumlah Grosir" defaultValue={hafara.grosir} required/>
+                <CInput id="name" type="number" placeholder="Masukkan Jumlah Grosir" defaultValue={hafara.grosir} onChange={onChangeGrosir}
+                        required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Harga Diskon</CLabel>
-                <CInput id="name" placeholder="Masukkan Harga Diskon"  required/>
+                <CInput id="name" placeholder="Masukkan Harga Diskon" required onChange={onChangeDiscountPrice}/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Berat</CLabel>
-                <CInput id="name" placeholder="Masukkan Berat Produk" defaultValue={hafara.weight} required/>
+                <CInput id="name" placeholder="Masukkan Berat Produk" defaultValue={hafara.weight}  onChange={onChangeWeight}required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Stock</CLabel>
                 <CInput id="name" placeholder="Masukkan Berat Produk" defaultValue={hafara.stock} disabled required/>
               </CFormGroup>
-
+              <CFormGroup>
+                <CLabel htmlFor="name">Video Url (Jika lebih dari 1 pisahkan dengan tanda ; )</CLabel>
+                <CInput id="name" placeholder="Masukkan Url Video Produk" onChange={onChangeVideos}/>
+              </CFormGroup>
 
             </CCol>
             <CCol md={"6"}>
@@ -147,7 +237,7 @@ const AddProductPage = (props) => {
                 <CLabel htmlFor="name">Pilih Jenis Product</CLabel>
                 <CSelect custom onChange={onchangeProductType}>
                   <option value="">Pilih Jenis Produk</option>
-                  {props.types.map(data=>(
+                  {props.types.map(data => (
                     <option key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
                   ))}
 
@@ -157,7 +247,7 @@ const AddProductPage = (props) => {
                 <CLabel htmlFor="name">Pilih Kategori Produk</CLabel>
                 <CSelect custom onChange={onchangeCategory}>
                   <option value="">Pilih Kategori Produk</option>
-                  {groupFilter(props.categories,'product_type_id',productTypeId).map(data=>(
+                  {groupFilter(props.categories, 'product_type_id', productTypeId).map(data => (
                     <option key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
                   ))}
 
@@ -165,14 +255,47 @@ const AddProductPage = (props) => {
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Pilih Merk Produk</CLabel>
-                <CSelect custom>
+                <CSelect custom onChange={onChangeBrand}>
                   <option value="">Pilih Merk Produk</option>
-                  {groupFilter(props.brands,'product_category_id', categoryId).map(data=>(
+                  {groupFilter(props.brands, 'product_category_id', categoryId).map(data => (
                     <option key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
                   ))}
 
                 </CSelect>
               </CFormGroup>
+              <CFormGroup>
+                <CLabel htmlFor="name">Deskripsi</CLabel>
+
+                <div>
+                  <ReactQuill className={"px-1"} theme="snow" onChange={onChangeDescription}/>
+                </div>
+                {/*<div>*/}
+                {/*<div dangerouslySetInnerHTML={{__html: value}}/>*/}
+                {/*<ReactQuill*/}
+                {/*  value={value}*/}
+                {/*  readOnly={true}*/}
+                {/*  theme={"bubble"}*/}
+                {/*/>*/}
+                {/*</div>*/}
+
+              </CFormGroup>
+              <CFormGroup>
+                <CLabel htmlFor="name">Spesifikasi</CLabel>
+
+                <div>
+                  <ReactQuill className={"px-1"} theme="snow" onChange={onChangeSpecification}/>
+                </div>
+
+              </CFormGroup>
+              <CFormGroup>
+                <CLabel htmlFor="name">Rincian</CLabel>
+
+                <div>
+                  <ReactQuill className={"px-1"} theme="snow" onChange={onChangeDetail}/>
+                </div>
+
+              </CFormGroup>
+
               <CFormGroup>
                 <CLabel htmlFor="name">Pilih Gambar Product</CLabel>
                 <div>
@@ -187,7 +310,7 @@ const AddProductPage = (props) => {
                   />
                 </div>
               </CFormGroup>
-              {image.length>0 && (
+              {image.length > 0 && (
                 <CFormGroup>
                   <CLabel htmlFor="name">Preview Gambar</CLabel>
                   <CRow className={"px-3"}>
@@ -201,45 +324,31 @@ const AddProductPage = (props) => {
                   </CRow>
                 </CFormGroup>
               )}
-              <CFormGroup>
-                <CLabel htmlFor="name">Deskripsi</CLabel>
 
-                  <div>
-                    <ReactQuill className={"px-1"} theme="snow" value={value} onChange={onValueChange}/>
-                  </div>
-
-              </CFormGroup>
-              <CFormGroup>
-                <CLabel htmlFor="name">Spesifikasi</CLabel>
-
-                <div>
-                  <ReactQuill className={"px-1"} theme="snow" onChange={onValueChange}/>
-                </div>
-
-              </CFormGroup>
-
-              <CFormGroup>
-                <CLabel htmlFor="name">Keyword</CLabel>
-                <CTextarea id="name" placeholder="Masukkan Keyword" defaultValue={hafara.keyword} required/>
-              </CFormGroup>
+              {/*<CFormGroup>*/}
+              {/*  <CLabel htmlFor="name">Keyword</CLabel>*/}
+              {/*  <CTextarea id="name" placeholder="Masukkan Keyword" defaultValue={hafara.keyword} required/>*/}
+              {/*</CFormGroup>*/}
 
 
             </CCol>
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton color="success">Simpan</CButton>
+          <CButton color="success" onClick={submitData}>Simpan</CButton>
         </CCardFooter>
 
       </CCard>
 
+    )
 
+    }
     </>
   );
 }
 
-const mapStateToProps = (state)=>{
-  return{
+const mapStateToProps = (state) => {
+  return {
     status: state.product.status,
     loading: state.product.loading,
     hafara: state.product.hafara,
@@ -248,4 +357,4 @@ const mapStateToProps = (state)=>{
     brands: state.master.brands,
   }
 }
-export default connect(mapStateToProps,productDispatch)(AddProductPage)
+export default connect(mapStateToProps, productDispatch)(AddProductPage)

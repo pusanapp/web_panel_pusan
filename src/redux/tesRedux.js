@@ -12,7 +12,7 @@ export const testReducer = persistReducer({
         storage,
         key: "pusan",
         whitelist: [
-            "user","tes"
+            "tes"
         ],
     },(state = initialState, action) => {
         switch (action.type){

@@ -5,7 +5,7 @@ exports.globalUrl = {
   // paymentServiceLocal: ,
 
   productService: 'https://pusanair-dev.xyz/product-service',
-  // transactionService: ,
+  transactionService: 'https://pusanair-dev.xyz/transaction-service',
   // userService: ,
   // paymentService: ,
 }

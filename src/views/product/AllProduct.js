@@ -20,7 +20,7 @@ import {productDispatch} from "./redux/productRedux";
 import CIcon from '@coreui/icons-react'
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
 import {searchFilter} from "../../utils/filterHelper";
-import {FaPencilAlt, FaTrashAlt} from "react-icons/all";
+import {FaPencilAlt, FaTrashAlt, FaEye} from "react-icons/all";
 import {subscribeToChat} from "../../utils/socketHelper";
 
 const AllProduct = (props) => {
@@ -28,14 +28,21 @@ const AllProduct = (props) => {
   const fields = ['name','code', 'brand', 'category', 'stock','action']
   const [search, setSearch] = useState(false)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
-  const showDeleteDialog = ()=>{
+  const [deletedId, setDeletedId] = useState(-1)
+  const showDeleteDialog = (data)=>{
     setDeleteVisibility(true)
+    setDeletedId(data.id)
   }
   const hideDeleteDialog = ()=>{
     setDeleteVisibility(false)
+    setDeletedId(-1)
   }
   const onChangeSearch = (event)=>{
     setSearch(event.target.value)
+  }
+  const deleteProduct = () => {
+    props.deleteProduct(deletedId)
+    hideDeleteDialog()
   }
 
   useEffect(()=>{
@@ -45,7 +52,7 @@ const AllProduct = (props) => {
 
   return(
     <>
-      <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"produk"}onDelete={hideDeleteDialog}/>
+      <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"produk"}onDelete={deleteProduct}/>
 
       <CCard>
         <CCardHeader>
@@ -86,10 +93,15 @@ const AllProduct = (props) => {
                 <td>
                   <Link to={'/'}>
                     <span>
+                      <FaEye color="blue"/>
+                    </span>
+                  </Link>
+                  <Link className='ml-3' to={'/'}>
+                    <span>
                       <FaPencilAlt color="green"/>
                     </span>
                   </Link>
-                  <a className='ml-3' onClick={()=>showDeleteDialog()}>
+                  <a className='ml-3' onClick={()=>showDeleteDialog(item)}>
                     <span><FaTrashAlt color="red"/></span>
                   </a>
                 </td>

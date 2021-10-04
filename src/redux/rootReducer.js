@@ -5,6 +5,7 @@ import * as product from '../views/product/redux/productRedux'
 import * as user from '../views/pages/login/loginRedux'
 import {changeState} from "../store";
 import * as master from '../views/master/redux/masterRedux'
+import * as transaction from '../views/transaction/redux/transactionRedux'
 // import * as tes from './tes/testRedux'
 
 
@@ -13,7 +14,8 @@ export const rootReducer = combineReducers({
   sidebar: changeState,
   product: product.productReducer,
   user: user.loginReducer,
-  master: master.masterReducer
+  master: master.masterReducer,
+  transaction: transaction.transactionReducer
 })
 
 export function* rootSaga() {
@@ -21,6 +23,7 @@ export function* rootSaga() {
     tes.tesSaga(),
     product.productSaga(),
     user.userSaga(),
-    master.masterSaga()
+    master.masterSaga(),
+    transaction.transactionSaga()
   ])
 }

@@ -35,7 +35,7 @@ const AddProductType = (props) => {
     <>
       <LoadingDialog show={props.loading}/>
       {props.status? (
-        <Redirect to="/master/product-type"/>
+        <Redirect to="/master/all"/>
       ) : (
 
         <CCard>
