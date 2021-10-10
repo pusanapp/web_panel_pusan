@@ -1,6 +1,6 @@
 exports.globalUrl = {
   productServiceLocal: 'http://127.0.0.1:4002',
-  // transactionServiceLocal:,
+  transactionServiceLocal: 'http://127.0.0.1:4005',
   // userServiceLocal: ,
   // paymentServiceLocal: ,
 

@@ -83,6 +83,16 @@ export const transactionReducer = (state = initialState, {type,payload}) =>{
         on_process_transactions: payload
       }
     }
+    case actionType.ORDER_CONFIRMATION: {
+      return {
+        ...state,
+      }
+    }
+    case actionType.ORDER_CONFIRMATION_SUCCESS:{
+      return {
+        ...state
+      }
+    }
     default:
       return {
         ...state
@@ -99,7 +109,10 @@ export const transactionDispatch = {
   doneTransactionLoaded: (data) =>({type: actionType.DONE_TRANSACTION_LOADED, payload: data}),
   loadOnProcessTransaction: () =>({type: actionType.LOAD_ON_PROCESS_TRANSACTION}),
   onProcessTransactionLoaded: (data) =>({type: actionType.ON_PROCESS_TRANSACTION_LOADED, payload: data}),
-
+  orderConfirmation: (data) =>({type: actionType.ORDER_CONFIRMATION, payload: data}),
+  orderConfirmationSuccess: (data) => ({type: actionType.ORDER_CONFIRMATION_SUCCESS}),
+  inputResi: (data) =>({type: actionType.INPUT_RESI, payload: data}),
+  inputResiSuccess: (data) =>({type: actionType.INPUT_RESI_SUCCESS})
 }
 
 export function* transactionSaga (){
@@ -114,7 +127,7 @@ export function* transactionSaga (){
   })
   yield takeLatest(actionType.LOAD_NEW_ORDER, function* (action) {
     try{
-      const {data: response} = yield axios.get(`${globalUrl.transactionService}/api/v1/transaction/new/all`)
+      const {data: response} = yield axios.get(`${globalUrl.transactionService}/api/v1/transaction/paid/all`)
       console.log(response)
       yield put(transactionDispatch.newOrderLoaded(response.data))
 
@@ -133,9 +146,32 @@ export function* transactionSaga (){
   })
   yield takeLatest(actionType.LOAD_ON_PROCESS_TRANSACTION, function* (action) {
     try{
-      const {data: response} = yield axios.get(`h${globalUrl.transactionService}/api/v1/transaction/on-process/all`)
+      const {data: response} = yield axios.get(`${globalUrl.transactionService}/api/v1/transaction/on-process/all`)
       console.log(response)
       yield put(transactionDispatch.onProcessTransactionLoaded(response.data))
+    }catch (e) {
+      console.log(e.response)
+    }
+  })
+  yield takeLatest(actionType.ORDER_CONFIRMATION, function* (action) {
+    const id = action.payload;
+    try{
+      const {data: response} = yield axios.post(`${globalUrl.transactionService}/api/v1/transaction/confirm/order/${id}`)
+      console.log(response)
+      yield put(transactionDispatch.orderConfirmationSuccess(response.message))
+      yield put(transactionDispatch.loadNewOrder())
+    }catch (e) {
+      console.log(e.response)
+    }
+  })
+  yield takeLatest(actionType.INPUT_RESI, function* (action) {
+    const id = action.payload.id;
+    const data = action.payload.data;
+    try{
+      const {data: response} = yield axios.post(`${globalUrl.transactionService}/api/v1/transaction/input-resi/order/${id}`)
+      console.log(response)
+      yield put(transactionDispatch.inputResiSuccess(response.message))
+      yield put(transactionDispatch.loadOnProcessTransaction())
     }catch (e) {
       console.log(e.response)
     }

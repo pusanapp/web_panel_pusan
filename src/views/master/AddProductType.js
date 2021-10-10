@@ -8,7 +8,7 @@ import {
   CCol,
   CDataTable,
   CFormGroup,
-  CInput,
+  CInput, CInputFile,
   CLabel,
   CRow
 } from "@coreui/react";
@@ -21,12 +21,25 @@ const AddProductType = (props) => {
   const [name, setName] = useState('')
   // const [type] = useState(props.location.state.type[0])
   const history= useHistory()
+  const [iconFile, setIconFile] = useState(undefined)
+
   const onChangeName = (event) => {
     setName(event.target.value)
   }
+  const onChangeInputIcon = event => {
+    console.log(event.target.files)
+    const fileUploaded = event.target.files[0];
+    setIconFile(fileUploaded)
+  };
   const submit = ()=>{
+    const icon = new FormData()
+    icon.append('icons', iconFile)
+    const type = {
+      name: name,
+    }
     const data = {
-      name: name
+      type: type,
+      icon: icon
     }
     console.log(data)
     props.saveProductType(data)
@@ -48,7 +61,12 @@ const AddProductType = (props) => {
               <CFormGroup>
                 <CLabel>Nama Jenis Produk</CLabel>
                 <CInput placeholder="Nama Jenis Produk" onChange={onChangeName} required />
-                <div className="mt-2">
+
+              </CFormGroup>
+              <CFormGroup>
+                <CLabel>Icon Jenis Produk</CLabel>
+                <CInputFile placeholder="Icon Category" onChange={onChangeInputIcon} required/>
+                <div className="mt-3">
                   <CButton color="info" onClick={submit}>Simpan</CButton>
                 </div>
               </CFormGroup>

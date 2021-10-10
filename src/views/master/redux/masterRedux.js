@@ -214,7 +214,12 @@ export function* masterSaga (){
   yield takeLatest(actionType.SAVE_PRODUCT_TYPE, function* (action) {
     try {
       const data = action.payload
-      const {data: response} = yield axios.post(`${globalUrl.productService}/api/v1/pusan/product/type/add`,data)
+      const type = data.type
+      const icon = data.icon
+      const {data: response1} = yield axios.post(`https://pusanair-dev.xyz/assets-service/icon/upload`, icon)
+      console.log(response1)
+      type.icon_url = response1.data[0]
+      const {data: response} = yield axios.post(`${globalUrl.productService}/api/v1/pusan/product/type/add`,type)
       console.log(response)
       yield put(masterDispatch.productTypeSaved(response.status))
       yield put(masterDispatch.resetMasterState())

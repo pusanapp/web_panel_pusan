@@ -1,4 +1,4 @@
-import {persistReducer} from "redux-persist";
+import {persistStore,persistReducer} from "redux-persist";
 import {put, takeLatest} from "redux-saga/effects";
 import storage from "redux-persist/lib/storage";
 

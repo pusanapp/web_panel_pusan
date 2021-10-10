@@ -81,7 +81,11 @@ const AllProduct = (props) => {
             itemsPerPage={10}
             pagination
             sorter
+            striped
+            hover
+            clickableRows
             loading={props.loading}
+            onRowClick={(item) => {console.log(item)}}
             scopedSlots = {{
               'stock':
                 (item)=>(

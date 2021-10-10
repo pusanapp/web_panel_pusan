@@ -5,10 +5,12 @@ import {CButton, CCard, CCardBody, CCardHeader, CCol, CDataTable, CFormGroup, CI
 import {searchFilter} from "../../utils/filterHelper";
 import {Link} from "react-router-dom";
 import {FaEye, FaPencilAlt, FaTrashAlt} from "react-icons/all";
+import moment from "moment";
+import "moment/locale/id"
 
 const AllTransactionPage = (props) =>{
 
-  const fields = ['invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
+  const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
 
   useEffect(()=>{
     props.loadAllTransaction()
@@ -37,7 +39,18 @@ const AllTransactionPage = (props) =>{
             itemsPerPage={10}
             pagination
             sorter
+            striped
+            hover
+            clickableRows
             loading={props.loading}
+            onRowClick={(item) => {console.log(item)}}
+            scopedSlots = {{
+              'date': (item)=>(
+                <td>
+                  {moment(item.createdAt).format('lll')}
+                </td>
+              )
+            }}
           />
         </CCardBody>
       </CCard>

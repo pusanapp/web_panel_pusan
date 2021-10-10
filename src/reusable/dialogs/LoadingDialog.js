@@ -8,6 +8,7 @@ const LoadingDialog = ({show}) => {
       show={show}
       size="sm"
       onClose={()=>{}}
+      closeOnBackdrop={false}
     >
       <CModalHeader >
         <CModalTitle>Loading</CModalTitle>

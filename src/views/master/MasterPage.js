@@ -77,6 +77,7 @@ const MasterPage = (props) => {
       key: 'name',
       sort: true
     },
+    'icon',
     'action'
   ]
   const brandFields = [
@@ -131,6 +132,11 @@ const MasterPage = (props) => {
                 sorter
                 pagination
                 scopedSlots = {{
+                  'icon': (item) =>(
+                    <td>
+                      <CImg src={item.icon_url} rounded width={24} height={24} />
+                    </td>
+                  ),
                   'action':(item)=>(
                     <td>
                       <Link to={
@@ -258,7 +264,7 @@ const MasterPage = (props) => {
               <CDataTable
                 items={props.brands}
                 fields={brandFields}
-                itemsPerPage={10}
+                itemsPerPage={8}
                 loading={props.loading}
                 sorter
                 pagination
