@@ -2,8 +2,8 @@ import io from 'socket.io-client';
 
 let socket;
 export const initiateSocket = (room) => {
-  // socket = io('http://localhost:3000');
-  socket = io('https://ws.pusanair-dev.xyz');
+  socket = io('http://localhost:3002');
+  // socket = io('https://ws.pusanair-dev.xyz');
 
   console.log(`Connecting socket...`);
   return socket
@@ -16,10 +16,11 @@ export const disconnectSocket = () => {
 export const subscribeToChat = (cb) => {
   if (!socket) return (true);
   socket.on('hello', tes => {
-    console.log(tes)
+    console.log('hello, ',tes)
   })
   socket.on('hanif', data => {
-    console.log(data)
+    console.log('hanif, ',data)
+    // console.log('hanif, ',data.tess)
 
   })
   socket.on('chat', msg => {

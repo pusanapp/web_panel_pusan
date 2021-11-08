@@ -25,6 +25,8 @@ import 'react-quill/dist/quill.bubble.css';
 import {groupFilter} from "../../utils/filterHelper";
 import {Redirect} from "react-router-dom";
 import LoadingDialog from "../../reusable/dialogs/LoadingDialog";
+import '../../utils/additionalStyle.css'
+import {comboDispatch} from "./redux/comboRedux";
 
 const AddProductPage = (props) => {
   const dispatch = useDispatch()
@@ -48,7 +50,13 @@ const AddProductPage = (props) => {
   const [description, setDescription] = useState('')
   const [detail, setDetail] = useState('')
   const [specification, setSpecification] = useState('')
-
+  const [selectCombo, setSelectCombo] = useState(false)
+  const [includeComboId, setIncludeComboId] = useState(0)
+  const comboOptions = []
+  props.combos.map(combo=>{
+    const option = {value: combo.id, label: combo.combo_name}
+    comboOptions.push(option)
+  })
   const onChangeName = (event) => {
     setName(event.target.value)
   }
@@ -79,6 +87,15 @@ const AddProductPage = (props) => {
     const split = event.target.value.split('|')
     setProductTypeId(split[0])
     setType(split[1])
+    if(split[1]==='SENAPAN'){
+      setSelectCombo(true)
+    }else {
+      setSelectCombo(false)
+    }
+  }
+  const onChangeSelectCombo = (option) => {
+    console.log(option.value)
+    setIncludeComboId(option.value)
   }
   const onchangeCategory = (event) => {
     const split = event.target.value.split('|')
@@ -112,6 +129,7 @@ const AddProductPage = (props) => {
     hiddenFileInput.current.click();
   };
   const removeImage = (index) => {
+    console.log(index)
     image.splice(index, 1);
     console.log(image);
     setImage([...image]);
@@ -161,7 +179,8 @@ const AddProductPage = (props) => {
         discount_price: discountPrice,
         category_id: parseInt(categoryId),
         type_id: parseInt(productTypeId),
-        brand_id: parseInt(brandId)
+        brand_id: parseInt(brandId),
+        include_combo_id: includeComboId
       },
       videos: videos
     }
@@ -176,6 +195,7 @@ const AddProductPage = (props) => {
     dispatch(masterDispatch.loadProductCategory())
     dispatch(masterDispatch.loadProductType())
     dispatch(masterDispatch.loadProductBrand())
+    dispatch(comboDispatch.loadAllCombo())
     props.loadHafaraProduct()
   }, [])
   return (
@@ -202,7 +222,7 @@ const AddProductPage = (props) => {
                 <CInput id="name" placeholder="Masukkan Kode Produk" defaultValue={hafara.kode_barang} onChange={onChangeCode} required/>
               </CFormGroup>
               <CFormGroup>
-                <CLabel htmlFor="name">Harga</CLabel>
+                <CLabel htmlFor="name">Harga Jual</CLabel>
                 <CInput id="name" placeholder="Masukkan Harga Produk" defaultValue={hafara.harga_jual_umum} onChange={onChangePrice} required/>
               </CFormGroup>
               <CFormGroup>
@@ -214,17 +234,17 @@ const AddProductPage = (props) => {
                 <CInput id="name" type="number" placeholder="Masukkan Jumlah Grosir" defaultValue={hafara.grosir} onChange={onChangeGrosir}
                         required/>
               </CFormGroup>
-              <CFormGroup>
-                <CLabel htmlFor="name">Harga Diskon</CLabel>
-                <CInput id="name" placeholder="Masukkan Harga Diskon" required onChange={onChangeDiscountPrice}/>
-              </CFormGroup>
+              {/*<CFormGroup>*/}
+              {/*  <CLabel htmlFor="name">Harga Diskon</CLabel>*/}
+              {/*  <CInput id="name" placeholder="Masukkan Harga Diskon" required onChange={onChangeDiscountPrice}/>*/}
+              {/*</CFormGroup>*/}
               <CFormGroup>
                 <CLabel htmlFor="name">Berat</CLabel>
                 <CInput id="name" placeholder="Masukkan Berat Produk" defaultValue={hafara.weight}  onChange={onChangeWeight}required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Stock</CLabel>
-                <CInput id="name" placeholder="Masukkan Berat Produk" defaultValue={hafara.stock} disabled required/>
+                <CInput id="name" placeholder="Stock" defaultValue={hafara.stock} disabled required/>
               </CFormGroup>
               <CFormGroup>
                 <CLabel htmlFor="name">Video Url (Jika lebih dari 1 pisahkan dengan tanda ; )</CLabel>
@@ -263,6 +283,12 @@ const AddProductPage = (props) => {
 
                 </CSelect>
               </CFormGroup>
+              {selectCombo && (
+                <CFormGroup>
+                  <CLabel htmlFor="name">Pilih Combo (Opsional)</CLabel>
+                  <Select options={comboOptions} onChange={onChangeSelectCombo}/>
+                </CFormGroup>
+              )}
               <CFormGroup>
                 <CLabel htmlFor="name">Deskripsi</CLabel>
 
@@ -297,7 +323,7 @@ const AddProductPage = (props) => {
               </CFormGroup>
 
               <CFormGroup>
-                <CLabel htmlFor="name">Pilih Gambar Product</CLabel>
+                <CLabel htmlFor="name">Pilih Gambar Product (Klik Gambar Untuk Hapus)</CLabel>
                 <div>
 
                   <CButton className="btn-linkedin btn-brand mr-1 mb-1" onClick={handleClick}>
@@ -316,9 +342,12 @@ const AddProductPage = (props) => {
                   <CRow className={"px-3"}>
                     <div>
                     </div>
-                    {image.map(data => (
-                      <div>
-                        <CImg src={URL.createObjectURL(data)} rounded width={80}/>
+                    {image.map((data,index) => (
+                      <div key={index} className='imageContainer'>
+                        <div onClick={()=>{removeImage(index)}} className='closeButton'><span aria-hidden="true">&times;</span></div>
+
+                        <img src={URL.createObjectURL(data)} className='myImage'/>
+
                       </div>
                     ))}
                   </CRow>
@@ -355,6 +384,7 @@ const mapStateToProps = (state) => {
     categories: state.master.categories,
     types: state.master.types,
     brands: state.master.brands,
+    combos: state.combo.combos,
   }
 }
 export default connect(mapStateToProps, productDispatch)(AddProductPage)

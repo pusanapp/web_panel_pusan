@@ -1,17 +1,29 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {CCard, CCardBody, CCardHeader, CCol, CDataTable, CFormGroup, CInput, CRow} from "@coreui/react";
 import {transactionDispatch} from "./redux/transactionRedux";
 import moment from "moment";
 import "moment/locale/id"
-const DoneTransactionPage = (props) =>{
-  const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
+import {ViewTransactionDialog} from "../../reusable/transaction/ViewTransactionDialog";
 
+const DoneTransactionPage = (props) =>{
+  const [viewVisibility, setViewVisibility] = useState(false)
+  const [transaction, setTransaction] = useState({})
+  const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
+  const showViewDialog = (data) => {
+    setViewVisibility(true)
+    setTransaction(data)
+  }
+  const hideViewDialog = () => {
+    setViewVisibility(false)
+    setTransaction({})
+  }
   useEffect(()=>{
     props.loadDoneTransaction()
   },[])
   return(
     <>
+      <ViewTransactionDialog show={viewVisibility} transaction={transaction} hide={hideViewDialog}/>
       <CCard>
         <CCardHeader>
           Transaksi Selesai
@@ -38,6 +50,7 @@ const DoneTransactionPage = (props) =>{
             hover
             clickableRows
             loading={props.loading}
+            onRowClick={(item) => {showViewDialog(item)}}
             scopedSlots = {{
               'date': (item)=>(
                 <td>

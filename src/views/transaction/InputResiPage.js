@@ -4,7 +4,7 @@ import {CCard, CCardBody, CCardHeader, CCol, CDataTable, CFormGroup, CInput, CRo
 import {transactionDispatch} from "./redux/transactionRedux";
 import moment from "moment";
 import "moment/locale/id"
-import InputShippingNumberDialog from "../../reusable/dialogs/InputShippingNumberDialog";
+import InputShippingNumberDialog from "../../reusable/transaction/InputShippingNumberDialog";
 
 const InputResiPage = (props) =>{
   const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
@@ -37,7 +37,7 @@ const InputResiPage = (props) =>{
       <InputShippingNumberDialog show={inputDialogVisibility} transaction={transaction} onHide={hideDialog} submit={submitConfirm}/>
       <CCard>
         <CCardHeader>
-          Transaksi Diproses
+          Pesanan Diproses
         </CCardHeader>
         <CCardBody>
           <CCol>

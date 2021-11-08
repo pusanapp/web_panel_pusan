@@ -21,8 +21,8 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 
 const App = ()=> {
   useEffect(()=>{
-    initiateSocket()
-    subscribeToChat()
+    // initiateSocket()
+    // subscribeToChat()
   },[])
   const isLogin = useSelector(state => state.user.user)
   // render() {

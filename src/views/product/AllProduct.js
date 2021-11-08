@@ -22,12 +22,19 @@ import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
 import {searchFilter} from "../../utils/filterHelper";
 import {FaPencilAlt, FaTrashAlt, FaEye} from "react-icons/all";
 import {subscribeToChat} from "../../utils/socketHelper";
+import {ViewProductDialog} from "../../reusable/product/ViewProductDialog";
 
 const AllProduct = (props) => {
   const history = useHistory()
-  const fields = ['name','code', 'brand', 'category', 'stock','action']
+  const fields = ['name','code', 'brand', 'category', {
+    key: 'stock',
+    label: 'Stock',
+    sort: true
+  },'action']
   const [search, setSearch] = useState(false)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
+  const [viewVisibility, setViewVisibility] = useState(false)
+  const [viewedProduct, setViewedProduct]= useState({})
   const [deletedId, setDeletedId] = useState(-1)
   const showDeleteDialog = (data)=>{
     setDeleteVisibility(true)
@@ -44,6 +51,14 @@ const AllProduct = (props) => {
     props.deleteProduct(deletedId)
     hideDeleteDialog()
   }
+  const viewProduct = (data) =>{
+    setViewVisibility(true)
+    setViewedProduct(data)
+  }
+  const hideViewProduct = () => {
+    setViewVisibility(false)
+    setViewedProduct({})
+  }
 
   useEffect(()=>{
     props.loadAllProduct()
@@ -53,7 +68,7 @@ const AllProduct = (props) => {
   return(
     <>
       <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"produk"}onDelete={deleteProduct}/>
-
+      <ViewProductDialog show={viewVisibility} hide={hideViewProduct} product={viewedProduct}/>
       <CCard>
         <CCardHeader>
           Semua Produk
@@ -95,11 +110,11 @@ const AllProduct = (props) => {
                 ),
               'action':(item)=>(
                 <td>
-                  <Link to={'/'}>
+                  <a onClick={()=>{viewProduct(item)}}>
                     <span>
                       <FaEye color="blue"/>
                     </span>
-                  </Link>
+                  </a>
                   <Link className='ml-3' to={'/'}>
                     <span>
                       <FaPencilAlt color="green"/>

@@ -4,6 +4,15 @@ export const searchFilter = (data,params,query)=>{
     })
     return query? final : data
 }
+export const groupFilterStatus = (data, params, query)=>{
+  console.log('data, ', data)
+  console.log('query, ', query)
+  const final = data.filter((a) => {
+    return a[params] === query
+  })
+  console.log('filter, ', final)
+  return query? final : data
+}
 
 export const groupFilter = (data, params, query)=>{
   console.log('data, ', data)

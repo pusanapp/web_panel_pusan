@@ -1,0 +1,25 @@
+.closeButton{
+  position: absolute;
+  z-index:1;
+  top: -13px;
+  right: 0px;
+  align-items: start  ;
+  /*padding: 0px 1px;*/
+  border-radius: 10px;
+  cursor: default;
+  font-size: 24px;
+  color: #7e7e7e;
+  opacity: 0.5;
+}
+.myImage {
+  max-width: 100px;
+
+}
+.closeButton:hover {
+  opacity: 1;
+}
+.imageContainer {
+  position: relative;
+  /*max-width: 120px;*/
+  margin: 2px 2px;
+}

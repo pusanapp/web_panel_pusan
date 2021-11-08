@@ -1,6 +1,7 @@
 import {persistStore,persistReducer} from "redux-persist";
 import {put, takeLatest} from "redux-saga/effects";
 import storage from "redux-persist/lib/storage";
+import axios from "axios";
 
 const actionType = {
   LOGIN : 'LOGIN',
@@ -66,12 +67,20 @@ export const loginReducer = persistReducer({
 export function* userSaga (){
   yield takeLatest(actionType.LOGIN, function* (action) {
     const data = action.payload;
-    if (data.username ==='admin' && data.password === 'admin'){
-      console.log('berhasil')
-      yield put(loginDispatch.loginSuccess(data))
-    }else {
-      console.log('gagal')
-      yield put(loginDispatch.error('Login Gagal'))
+    try {
+      const {data : response} = yield axios.post(`http://127.0.0.1:4000/api/v1/panel-user/login`, data)
+      console.log(response)
+      yield put(loginDispatch.loginSuccess(response.data))
+
+    }catch (e) {
+      console.log(e.response)
     }
+    // if (data.username ==='admin' && data.password === 'admin'){
+    //   console.log('berhasil')
+    //   yield put(loginDispatch.loginSuccess(data))
+    // }else {
+    //   console.log('gagal')
+    //   yield put(loginDispatch.error('Login Gagal'))
+    // }
   })
 }

@@ -26,7 +26,10 @@ import {
 const TheHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector(state => state.sidebar.sidebarShow)
-
+  // const role = useSelector(state => state.sidebar.role)
+  const user = useSelector(state => state.user.user)
+  // const role = useSelector(state => state.sidebar.role)
+  const role = user && user.role.toLowerCase();
   const toggleSidebar = () => {
     const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
     dispatch({type: 'set', sidebarShow: val})
@@ -75,7 +78,7 @@ const TheHeader = () => {
       <CSubheader className="px-3 justify-content-between">
         <CBreadcrumbRouter
           className="border-0 c-subheader-nav m-0 px-0 px-md-3"
-          routes={routes}
+          routes={routes[role]}
         />
       </CSubheader>
     </CHeader>

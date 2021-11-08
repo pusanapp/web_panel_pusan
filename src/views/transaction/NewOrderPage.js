@@ -4,7 +4,7 @@ import {transactionDispatch} from "./redux/transactionRedux";
 import {CCard, CCardBody, CCardHeader, CCol, CDataTable, CFormGroup, CInput, CRow} from "@coreui/react";
 import moment from "moment";
 import "moment/locale/id"
-import ConfirmationOrderDialog from "../../reusable/dialogs/ConfirmationOrderDialog";
+import ConfirmationOrderDialog from "../../reusable/transaction/ConfirmationOrderDialog";
 const NewOrderPage = (props) =>{
   const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
   const [confirmationDialogVisibility, setConfirmationDialogVisibility] = useState(false)

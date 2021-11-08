@@ -9,6 +9,7 @@ import { CContainer, CFade } from '@coreui/react'
 // routes config
 import routes from '../routes'
 import Page404 from "../views/pages/page404/Page404";
+import {useSelector} from "react-redux";
 
 const loading = (
   <div className="pt-3 text-center">
@@ -17,12 +18,18 @@ const loading = (
 )
 
 const TheContent = ({isLogin}) => {
+  // const role = useSelector(state => state.sidebar.role)
+  const user = useSelector(state => state.user.user)
+  // const role = useSelector(state => state.sidebar.role)
+  const role = user && user.role.toLowerCase();
+  console.log(routes[role])
+  const newRoutes = user? routes[role] : routes['sales']
   return (
     <main className="c-main">
       <CContainer fluid>
         <Suspense fallback={loading}>
           <Switch>
-            {routes.map((route, idx) => {
+            {newRoutes.map((route, idx) => {
               return route.component && (
                 <Route
                   key={idx}
