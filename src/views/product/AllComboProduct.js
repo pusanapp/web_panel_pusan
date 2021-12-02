@@ -19,6 +19,10 @@ import {productDispatch} from "./redux/productRedux";
 import {AddComboProductDialog} from "../../reusable/product/AddComboProductDialog";
 import {FaEye, FaPencilAlt, FaTrashAlt} from "react-icons/all";
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import overlayFactory from "react-bootstrap-table2-overlay";
 
 const AllComboProduct = (props) => {
   const dispatch = useDispatch()
@@ -71,6 +75,54 @@ const AllComboProduct = (props) => {
     'harga combo',
     'stock',
     'action'
+  ]
+  const { SearchBar } = Search;
+
+  const comboColumns = [
+    {
+      dataField: 'combo_name',
+      text: 'Nama',
+      sort: true,
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      formatter: (cell, row) => {
+        return(
+          <>
+            {row.status ? 'Active' : 'Non Active'}
+          </>
+        )
+      },
+      sort: true,
+    },
+    {
+      dataField: 'app_products.length',
+      text: 'Total Produk',
+      sort: true,
+    },
+    {
+      dataField:'action',
+      text: 'Action',
+      formatter: (cell, row) => {
+        return(
+          <>
+            <a >
+                    <span>
+                      <FaEye color="blue"/>
+                    </span>
+            </a>
+            <a className={'ml-3'}>
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+            </a>
+            <a className='ml-3' onClick={()=>{showDeleteDialog(row.id)}}>
+              <span><FaTrashAlt color="red"/></span>
+            </a></>
+        )
+      }
+    }
   ]
   const showAddProductDialog = () => {
     setAddProductVisibility(true)
@@ -154,53 +206,49 @@ const AllComboProduct = (props) => {
               </CToaster>
               <CRow>
                 <CCol>
-                  <CRow className="d-flex justify-content-between align-items-center mx-auto">
-                    <div>
-                      Semua Combo Produk
-                    </div>
-                    <div>
-                      <CButton color={"primary"} onClick={showAddFormToggle}>Tambah Baru</CButton>
-                    </div>
-                  </CRow>
-                  <CRow className="mt-3 mx-auto">
-                    <CDataTable
-                      items={props.combos}
-                      fields={fields}
-                      itemsPerPage={8}
-                      loading={props.loading}
-                      sorter
-                      pagination
-                      scopedSlots={{
-                        'status': (item) => (
-                          <td>
-                            {item.status ? 'Active' : 'Non Active'}
-                          </td>
-                        ),
-                        'total_produk': (item) => (
-                          <td>
-                            {item.app_products.length}
-                          </td>
-                        ),
-                        'action': (item) => (
-                          <td>
-                            <a>
-                    <span>
-                      <FaEye color="blue"/>
-                    </span>
-                            </a>
-                            <a className={'ml-3'}>
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                            </a>
-                            <a className='ml-3' onClick={()=>showDeleteDialog(item.id)}>
-                              <span><FaTrashAlt color="red"/></span>
-                            </a>
-                          </td>
-                        )
-                      }}
-                    />
-                  </CRow>
+                  <ToolkitProvider
+                    keyField="id"
+                    data={props.combos}
+                    columns={comboColumns}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                        <div className="row align-items-center justify-content-between mx-auto">
+                          <SearchBar {...props.searchProps} />
+                          <button
+                            className="col-auto btn btn-success"
+                            onClick={showAddFormToggle}
+                          >
+                            Tambah Baru
+                          </button>
+                        </div>
+                        <BootstrapTable
+                          {...props.baseProps}
+                          // remote
+                          striped
+                          pagination={paginationFactory()}
+                          noDataIndication={() => (
+                            <div>No data found</div>
+                          )}
+                          loading={props.loading}
+                          bootstrap4
+                          bordered={false}
+                          // onTableChange={onTableChange}
+                          overlay={overlayFactory({
+                            spinner: true,
+                            styles: {
+                              overlay: (base) => ({
+                                ...base,
+                                background:
+                                  "rgba(192,192,192,0.5)",
+                              }),
+                            },
+                          })}
+                        />
+                      </div>
+                    )}
+                  </ToolkitProvider>
                 </CCol>
               </CRow>
             </CCardBody>

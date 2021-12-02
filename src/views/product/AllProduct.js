@@ -16,6 +16,12 @@ import {DocsLink} from "../../reusable";
 import {Link, useHistory} from "react-router-dom";
 import {connect} from "react-redux";
 import {tesAction} from "../../redux/tesRedux";
+
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import overlayFactory from "react-bootstrap-table2-overlay";
+
 import {productDispatch} from "./redux/productRedux";
 import CIcon from '@coreui/icons-react'
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
@@ -23,35 +29,103 @@ import {searchFilter} from "../../utils/filterHelper";
 import {FaPencilAlt, FaTrashAlt, FaEye} from "react-icons/all";
 import {subscribeToChat} from "../../utils/socketHelper";
 import {ViewProductDialog} from "../../reusable/product/ViewProductDialog";
+import convertRupiah from "rupiah-format";
 
 const AllProduct = (props) => {
   const history = useHistory()
-  const fields = ['name','code', 'brand', 'category', {
-    key: 'stock',
-    label: 'Stock',
-    sort: true
-  },'action']
+
   const [search, setSearch] = useState(false)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
   const [viewVisibility, setViewVisibility] = useState(false)
-  const [viewedProduct, setViewedProduct]= useState({})
+  const [viewedProduct, setViewedProduct] = useState({})
   const [deletedId, setDeletedId] = useState(-1)
-  const showDeleteDialog = (data)=>{
+
+  const actionFormatter = (cell, row)=> {
+    return(
+      <>
+        <a onClick={() => {
+          viewProduct(row)
+        }}>
+                    <span>
+                      <FaEye color="blue"/>
+                    </span>
+        </a>
+        <Link className='ml-3' to={'/'}>
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+        </Link>
+        <a className='ml-3' onClick={() => showDeleteDialog(row)}>
+          <span><FaTrashAlt color="red"/></span>
+        </a>
+      </>
+    )
+  }
+  const { SearchBar } = Search;
+  const columns = [
+    {
+      dataField: 'name',
+      text: 'Nama Produk',
+      sort: true
+    },
+    {
+      dataField: 'code',
+      text: 'Kode Produk',
+      sort: true
+    },
+    {
+      dataField: 'price',
+      text: 'Harga',
+      sort: true,
+      formatter: (cell,row) => {
+        return(
+          <>{convertRupiah.convert(row.price)}</>
+        )
+      }
+    },
+    {
+      dataField: 'brand',
+      text: 'Merk',
+      sort: true
+    }, {
+      dataField: 'category',
+      text: 'Kategori',
+      sort: true
+    },
+    {
+      dataField: 'hafara_product.stock',
+      text: 'Stock',
+      sort: true
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      formatter: actionFormatter
+    }
+  ]
+  const onTableChange = (type, {filters}) => {
+    console.log('TYPE, ',type)
+    console.log('FILTERS, ',filters)
+  }
+
+
+
+  const showDeleteDialog = (data) => {
     setDeleteVisibility(true)
     setDeletedId(data.id)
   }
-  const hideDeleteDialog = ()=>{
+  const hideDeleteDialog = () => {
     setDeleteVisibility(false)
     setDeletedId(-1)
   }
-  const onChangeSearch = (event)=>{
+  const onChangeSearch = (event) => {
     setSearch(event.target.value)
   }
   const deleteProduct = () => {
     props.deleteProduct(deletedId)
     hideDeleteDialog()
   }
-  const viewProduct = (data) =>{
+  const viewProduct = (data) => {
     setViewVisibility(true)
     setViewedProduct(data)
   }
@@ -60,81 +134,76 @@ const AllProduct = (props) => {
     setViewedProduct({})
   }
 
-  useEffect(()=>{
+
+  useEffect(() => {
     props.loadAllProduct()
     subscribeToChat()
-  },[])
+  }, [])
 
-  return(
+  return (
     <>
-      <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"produk"}onDelete={deleteProduct}/>
+      <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"produk"} onDelete={deleteProduct}/>
       <ViewProductDialog show={viewVisibility} hide={hideViewProduct} product={viewedProduct}/>
       <CCard>
-        <CCardHeader>
-          Semua Produk
-        </CCardHeader>
         <CCardBody>
-          <CCol>
-            <CRow className="justify-content-between">
-              <CCol>
-                <CRow>
-                  <CFormGroup>
-                    <CInput id="name"  placeholder="Search" onChange={onChangeSearch} />
-                  </CFormGroup>
-                </CRow>
-              </CCol>
-              <div>
-                <CButton color="primary" size={'md'}onClick={()=>history.push('/pusan/products/add')}>
-                  Tambah Produk Baru
-                </CButton>
-              </div>
-            </CRow>
-          </CCol>
-          <CDataTable
-            items={searchFilter(props.products,'name',search)}
-            fields={fields}
-            itemsPerPage={10}
-            pagination
-            sorter
-            striped
-            hover
-            clickableRows
-            loading={props.loading}
-            onRowClick={(item) => {console.log(item)}}
-            scopedSlots = {{
-              'stock':
-                (item)=>(
-                  <td>
-                    {item.hafara_product.stock}
-                  </td>
-                ),
-              'action':(item)=>(
-                <td>
-                  <a onClick={()=>{viewProduct(item)}}>
-                    <span>
-                      <FaEye color="blue"/>
-                    </span>
-                  </a>
-                  <Link className='ml-3' to={'/'}>
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                  </Link>
-                  <a className='ml-3' onClick={()=>showDeleteDialog(item)}>
-                    <span><FaTrashAlt color="red"/></span>
-                  </a>
-                </td>
-              )
-            }}
-          />
+          <CRow>
+            <CCol>
+              <ToolkitProvider
+                keyField="id"
+                data={props.products}
+                columns={columns}
+                search
+              >
+                {(props) => (
+                  <div>
+                    <div className="row align-items-center justify-content-between mx-auto">
+                      <SearchBar {...props.searchProps} />
+                      <button
+                        className="col-auto btn btn-success"
+                        onClick={() => history.push('/pusan/products/add')}
+                      >
+                        Tambah Produk Baru
+                      </button>
+                    </div>
+                    <BootstrapTable
+                      {...props.baseProps}
+                      // remote
+                      striped
+                      pagination={paginationFactory()}
+                      noDataIndication={() => (
+                        <div>No data found</div>
+                      )}
+                      hover
+                      loading={props.loading}
+                      bootstrap4
+                      bordered={false}
+                      onTableChange={onTableChange}
+                      overlay={overlayFactory({
+                        spinner: true,
+                        styles: {
+                          overlay: (base) => ({
+                            ...base,
+                            background:
+                              "rgba(192,192,192,0.5)",
+                          }),
+                        },
+                      })}
+                    />
+                  </div>
+                )}
+              </ToolkitProvider>
+            </CCol>
+
+          </CRow>
+
         </CCardBody>
       </CCard>
     </>
   )
 }
 const mapStateToProps = (state) => {
-  console.log('STATE, ',state)
-  return{
+  console.log('STATE, ', state)
+  return {
     products: state.product.products,
     loading: state.product.loading
   }

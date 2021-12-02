@@ -1,6 +1,6 @@
 import {put, takeLatest} from "redux-saga/effects";
 import axios from "axios";
-import {globalUrl, productServiceLocal} from "../../../utils/globalUrl";
+import {globalUrl, productService} from "../../../utils/globalUrl";
 
 const actionTypes = {
   RESET_COMBO_STATE: 'RESET_COMBO_STATE',
@@ -139,7 +139,7 @@ export function* comboSaga() {
   yield takeLatest(actionTypes.ADD_NEW_COMBO, function* (action) {
     const data = action.payload;
     try {
-      const {data: response} = yield axios.post(`${globalUrl.productServiceLocal}/api/v1/master/combo/new`, data)
+      const {data: response} = yield axios.post(`${globalUrl.productService}/api/v1/master/combo/new`, data)
       console.log(response)
       yield put(comboDispatch.newComboAdded(response.status))
       yield put(comboDispatch.loadAllCombo())
@@ -151,7 +151,7 @@ export function* comboSaga() {
   yield takeLatest(actionTypes.DELETE_COMBO, function* (action) {
     const id = action.payload;
     try {
-      const {data: response} = yield axios.delete(`${productServiceLocal}/api/v1/master/combo/delete/${id}`)
+      const {data: response} = yield axios.delete(`${productService}/api/v1/master/combo/delete/${id}`)
       console.log(response)
       yield put(comboDispatch.loadAllCombo())
     }catch (e) {

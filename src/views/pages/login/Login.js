@@ -17,13 +17,13 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import {useDispatch} from "react-redux";
-import {loginDispatch} from "./loginRedux";
+import {useDispatch, useSelector} from "react-redux";
+import {userDispatch} from "./loginRedux";
 import * as Yup from 'yup';
 const Login = () => {
   const dispatch = useDispatch()
-  const [username,setUsername] = useState('')
-  const [password,setPassword] = useState('')
+  const loginLoading = useSelector(state => state.user.loginLoading)
+
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -35,7 +35,7 @@ const Login = () => {
     }),
     onSubmit: values => {
       console.log(values)
-      dispatch(loginDispatch.loginUser(values))
+      dispatch(userDispatch.loginUser(values))
     }
   })
 
@@ -81,7 +81,7 @@ const Login = () => {
                     {/*) : null}*/}
                     <CRow>
                       <CCol xs="6">
-                        <CButton color="primary" className="px-4" type={'submit'}>Login</CButton>
+                        <CButton color="success" className="px-4" type={'submit'}>{loginLoading? 'Loading...':'Login'}</CButton>
                       </CCol>
                       <CCol xs="6" className="text-right">
                         <CButton color="link" className="px-0">Forgot password?</CButton>

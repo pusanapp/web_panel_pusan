@@ -18,6 +18,10 @@ import {Link} from "react-router-dom";
 import {FaPencilAlt, FaTrashAlt} from "react-icons/all";
 import {useHistory} from "react-router-dom";
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import overlayFactory from "react-bootstrap-table2-overlay";
 
 const MasterPage = (props) => {
   const history = useHistory()
@@ -96,6 +100,129 @@ const MasterPage = (props) => {
     'action'
   ]
 
+  const { SearchBar } = Search;
+  const jenisColumns = [
+    {
+      dataField: 'name',
+      text: 'Nama',
+      sort: true
+    },
+    {
+      dataField: 'icon',
+      text: 'Icon',
+      formatter: (cell, row) => {
+        return(
+          <CImg src={row.icon_url} rounded width={24} height={24} />
+        )
+      }
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      formatter: (cell, row) => {
+        return(
+          <>
+            <Link to={
+              {
+                pathname: `/master/product-type/add`,
+                state: {
+                  type: props.types.filter(
+                    (d) => d.id === row.id
+                  ),
+                },
+              }
+            }>
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+            </Link>
+            <a className='ml-3' onClick={()=>showDeleteDialog(row.id)}>
+              <span><FaTrashAlt color="red"/></span>
+            </a>
+          </>
+        )
+      }
+    }
+  ]
+  const brandColumns = [
+    {
+      dataField: 'name',
+      text: 'Nama',
+      sort: true
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      formatter: (cell, row) => {
+        return(
+          <>
+            <Link to={
+              {
+                pathname: `/master/product-type/add`,
+                state: {
+                  type: props.types.filter(
+                    (d) => d.id === row.id
+                  ),
+                },
+              }
+            }>
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+            </Link>
+            <a className='ml-3' onClick={()=>showDeleteBrandDialog(row.id)}>
+              <span><FaTrashAlt color="red"/></span>
+            </a>
+          </>
+        )
+      }
+    }
+  ]
+  const categoryColumns = [
+    {
+      dataField: 'name',
+      text: 'Nama',
+      sort: true
+    },
+    {
+      dataField: 'icon',
+      text: 'Icon',
+      formatter: (cell, row) => {
+        return(
+          <CImg src={row.icon_url} rounded width={24} height={24} />
+        )
+      }
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      formatter: (cell, row) => {
+        return(
+          <>
+            <Link to={
+              {
+                pathname: `/master/product-type/add`,
+                state: {
+                  type: props.types.filter(
+                    (d) => d.id === row.id
+                  ),
+                },
+              }
+            }>
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+            </Link>
+            <a className='ml-3' onClick={()=>showDeleteCategoryDialog(row.id)}>
+              <span><FaTrashAlt color="red"/></span>
+            </a>
+          </>
+        )
+      }
+    }
+  ]
+
+
   return(
     <>
       <DeleteDialog show={deleteVisibility} onHide={hideDeleteDialog} item={"jenis produk"} onDelete={deleteType}/>
@@ -108,65 +235,55 @@ const MasterPage = (props) => {
               Master Jenis Produk
             </CCardHeader>
             <CCardBody>
-              <CCol>
-                <CRow className="justify-content-between">
-                  <CCol>
-                    <CRow>
-                      <CFormGroup>
-                        <CInput id="name"  placeholder="Search" />
-                      </CFormGroup>
-                    </CRow>
-                  </CCol>
-                  <div>
-                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-type/add')}>
-                      Tambah Jenis Produk
-                    </CButton>
-                  </div>
-                </CRow>
-              </CCol>
-              <CDataTable
-                items={props.types}
-                fields={fields}
-                itemsPerPage={5}
-                loading={props.loading}
-                sorter
-                pagination
-                scopedSlots = {{
-                  'icon': (item) =>(
-                    <td>
-                      <CImg src={item.icon_url} rounded width={24} height={24} />
-                    </td>
-                  ),
-                  'action':(item)=>(
-                    <td>
-                      <Link to={
-                        {
-                          pathname: `/master/product-type/add`,
-                          state: {
-                            type: props.types.filter(
-                              (d) => d.id === item.id
-                            ),
-                          },
-                        }
-                      }>
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                      </Link>
-                      <a className='ml-3' onClick={()=>showDeleteDialog(item.id)}>
-                        <span><FaTrashAlt color="red"/></span>
-                      </a>
-                    </td>
-                  )
-                }}
-              />
-              {/*<CPagination*/}
-              {/*  activePage={1}*/}
-              {/*  // onActivePageChange={pageChange}*/}
-              {/*  pages={1000/10}*/}
-              {/*  doubleArrows={false}*/}
-              {/*  align="center"*/}
-              {/*/>*/}
+              <CRow>
+                <CCol>
+                  <ToolkitProvider
+                    keyField="id"
+                    data={props.types}
+                    columns={jenisColumns}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                        <div className="row align-items-center justify-content-between mx-auto">
+                          <SearchBar {...props.searchProps} />
+                          <button
+                            className="col-auto btn btn-success "
+                            onClick={()=>history.push('/master/product-type/add')}
+                          >
+                            Tambah Jenis Baru
+                          </button>
+                        </div>
+                        <BootstrapTable
+                          {...props.baseProps}
+                          // remote
+                          striped
+                          pagination={paginationFactory()}
+                          noDataIndication={() => (
+                            <div>No data found</div>
+                          )}
+                          loading={props.loading}
+                          bootstrap4
+                          bordered={false}
+                          // onTableChange={onTableChange}
+                          overlay={overlayFactory({
+                            spinner: true,
+                            styles: {
+                              overlay: (base) => ({
+                                ...base,
+                                background:
+                                  "rgba(192,192,192,0.5)",
+                              }),
+                            },
+                          })}
+                        />
+                      </div>
+                    )}
+                  </ToolkitProvider>
+                </CCol>
+
+              </CRow>
+
             </CCardBody>
           </CCard>
         </CCol>
@@ -176,65 +293,57 @@ const MasterPage = (props) => {
               Master Kategori
             </CCardHeader>
             <CCardBody>
-              <CCol>
-                <CRow className="justify-content-between">
-                  <CCol>
-                    <CRow>
-                      <CFormGroup>
-                        <CInput id="name"  placeholder="Search" />
-                      </CFormGroup>
-                    </CRow>
-                  </CCol>
-                  <div>
-                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-category/add')}>
-                      Tambah Kategori
-                    </CButton>
-                  </div>
-                </CRow>
-              </CCol>
-              <CDataTable
-                items={props.categories}
-                fields={categoryFields}
-                itemsPerPage={5}
-                loading={props.loading}
-                sorter
-                pagination
-                scopedSlots = {{
-                  'icon': (item) =>(
-                    <td>
-                      <CImg src={item.icon_url} rounded width={24} height={24} />
-                    </td>
-                  ),
-                  'action':(item)=>(
-                    <td>
-                      <Link to={
-                        {
-                          pathname: `/master/product-type/add`,
-                          state: {
-                            type: props.types.filter(
-                              (d) => d.id === item.id
-                            ),
-                          },
-                        }
-                      }>
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                      </Link>
-                      <a className='ml-3' onClick={()=>showDeleteCategoryDialog(item.id)}>
-                        <span><FaTrashAlt color="red"/></span>
-                      </a>
-                    </td>
-                  )
-                }}
-              />
-              {/*<CPagination*/}
-              {/*  activePage={1}*/}
-              {/*  // onActivePageChange={pageChange}*/}
-              {/*  pages={1000/10}*/}
-              {/*  doubleArrows={false}*/}
-              {/*  align="center"*/}
-              {/*/>*/}
+
+              <CRow>
+                <CCol>
+                  <ToolkitProvider
+                    keyField="id"
+                    data={props.categories}
+                    columns={categoryColumns}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                        <div className="row align-items-center justify-content-between mx-auto">
+                          <SearchBar {...props.searchProps} />
+                          <button
+                            className="col-auto btn btn-success "
+                            onClick={()=>history.push('/master/product-category/add')}
+                          >
+                            Tambah Kategori
+                          </button>
+                        </div>
+                        <BootstrapTable
+                          {...props.baseProps}
+                          // remote
+                          striped
+                          pagination={paginationFactory({
+                            sizePerPage: 5
+                          })}
+                          noDataIndication={() => (
+                            <div>No data found</div>
+                          )}
+                          loading={props.loading}
+                          bootstrap4
+                          bordered={false}
+                          // onTableChange={onTableChange}
+                          overlay={overlayFactory({
+                            spinner: true,
+                            styles: {
+                              overlay: (base) => ({
+                                ...base,
+                                background:
+                                  "rgba(192,192,192,0.5)",
+                              }),
+                            },
+                          })}
+                        />
+                      </div>
+                    )}
+                  </ToolkitProvider>
+                </CCol>
+
+              </CRow>
             </CCardBody>
           </CCard>
         </CCol>
@@ -245,60 +354,57 @@ const MasterPage = (props) => {
               Master Merk
             </CCardHeader>
             <CCardBody>
-              <CCol>
-                <CRow className="justify-content-between">
-                  <CCol>
-                    <CRow>
-                      <CFormGroup>
-                        <CInput id="name"  placeholder="Search" />
-                      </CFormGroup>
-                    </CRow>
-                  </CCol>
-                  <div>
-                    <CButton color="primary" size={'md'} onClick={()=>history.push('/master/product-brand/add')}>
-                      Tambah Merk
-                    </CButton>
-                  </div>
-                </CRow>
-              </CCol>
-              <CDataTable
-                items={props.brands}
-                fields={brandFields}
-                itemsPerPage={8}
-                loading={props.loading}
-                sorter
-                pagination
-                scopedSlots = {{
-                  'action':(item)=>(
-                    <td>
-                      <Link to={
-                        {
-                          pathname: `/master/product-type/add`,
-                          state: {
-                            type: props.types.filter(
-                              (d) => d.id === item.id
-                            ),
-                          },
-                        }
-                      }>
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                      </Link>
-                      <a className='ml-3' onClick={()=>showDeleteBrandDialog(item.id)}>
-                        <span><FaTrashAlt color="red"/></span>
-                      </a>
-                    </td>
-                  )
-                }}
-              />
-              {/*<CPagination*/}
-              {/*  activePage={1}*/}
-              {/*  // onActivePageChange={pageChange}*/}
-              {/*  pages={1000/10}*/}
-              {/*  doubleArrows={false}*/}
-              {/*  align="center"*/}
-              {/*/>*/}
+              <CRow>
+                <CCol>
+                  <ToolkitProvider
+                    keyField="id"
+                    data={props.brands}
+                    columns={brandColumns}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                        <div className="row align-items-center justify-content-between mx-auto">
+                          <SearchBar {...props.searchProps} />
+                          <button
+                            className="col-auto btn btn-success "
+                            onClick={()=>history.push('/master/product-brand/add')}
+                          >
+                            Tambah Merk Baru
+                          </button>
+                        </div>
+                        <BootstrapTable
+                          {...props.baseProps}
+                          // remote
+                          striped
+                          pagination={paginationFactory({
+                            sizePerPage: 5
+                          })}
+                          noDataIndication={() => (
+                            <div>No data found</div>
+                          )}
+                          loading={props.loading}
+                          bootstrap4
+                          bordered={false}
+                          // onTableChange={onTableChange}
+                          overlay={overlayFactory({
+                            spinner: true,
+                            styles: {
+                              overlay: (base) => ({
+                                ...base,
+                                background:
+                                  "rgba(192,192,192,0.5)",
+                              }),
+                            },
+                          })}
+                        />
+                      </div>
+                    )}
+                  </ToolkitProvider>
+                </CCol>
+
+              </CRow>
+
             </CCardBody>
           </CCard>
         </CCol>

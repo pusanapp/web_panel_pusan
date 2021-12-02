@@ -2,9 +2,11 @@ import io from 'socket.io-client';
 
 let socket;
 export const initiateSocket = (room) => {
-  socket = io('http://localhost:3002');
-  // socket = io('https://ws.pusanair-dev.xyz');
-
+  if (socket) {
+    return socket
+  }
+  // socket = io('http://localhost:3002');
+  socket = io('https://ws.pusanair-dev.xyz');
   console.log(`Connecting socket...`);
   return socket
   // if (socket && room) socket.emit('join', room);
@@ -30,5 +32,12 @@ export const subscribeToChat = (cb) => {
 }
 export const sendMessage = (room, message) => {
   if (socket) socket.emit('chat', {message, room});
+}
+
+export const subscribePayment = (listener) => {
+  socket.on('payment',listener)
+}
+export const unSubscribePayment = (listener) => {
+  socket.off('payment',listener)
 }
 

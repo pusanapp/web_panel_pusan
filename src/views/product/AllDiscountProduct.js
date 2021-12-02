@@ -23,6 +23,11 @@ import {productDispatch} from "./redux/productRedux";
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
 import {ViewDiscountDialog} from "../../reusable/product/ViewDiscountDialog";
 
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import overlayFactory from "react-bootstrap-table2-overlay";
+
 const AllDiscountProduct = (props) => {
   const dispatch = useDispatch()
   const [addProductVisibility, setAddProductVisibility] = useState(false)
@@ -80,21 +85,62 @@ const AllDiscountProduct = (props) => {
     setAddProductVisibility(false)
   }
   console.log(addedProducts)
-  const fields = [
-    {
-      key: 'name',
-      sort: true
-    },
-    'status',
-    'total produk',
-    'action'
-  ]
   const productFields = [
     'name',
     'harga diskon',
     'stock',
     'action'
   ]
+  const { SearchBar } = Search;
+
+  const discountColumns = [
+    {
+      dataField: 'name',
+      text: 'Nama',
+      sort: true,
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      formatter: (cell, row) => {
+        return(
+          <>
+            {row.status ? 'Active' : 'Non Active'}
+          </>
+        )
+      },
+      sort: true,
+    },
+    {
+      dataField: 'app_product.length',
+      text: 'Total Produk',
+      sort: true,
+    },
+    {
+      dataField:'action',
+      text: 'Action',
+      formatter: (cell, row) => {
+        return(
+          <>
+            <a >
+                    <span>
+                      <FaEye color="blue"/>
+                    </span>
+            </a>
+            <a className={'ml-3'}>
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+            </a>
+            <a className='ml-3' onClick={()=>{showDelete(row.id)}}>
+              <span><FaTrashAlt color="red"/></span>
+            </a></>
+        )
+      }
+    }
+  ]
+
+
 
   const submitAddDiscount = () => {
     const data = {
@@ -164,53 +210,50 @@ const AllDiscountProduct = (props) => {
               </CToaster>
               <CRow>
                 <CCol>
-                  <CRow className="d-flex justify-content-between align-items-center mx-auto">
-                    <div>
-                      Semua Diskon Product
-                    </div>
-                    <div>
-                      <CButton color={"primary"} onClick={showAddFormToggle}>Tambah Baru</CButton>
-                    </div>
-                  </CRow>
-                  <CRow className="mt-3 mx-auto">
-                    <CDataTable
-                      items={props.discounts}
-                      fields={fields}
-                      itemsPerPage={8}
-                      loading={props.loading}
-                      sorter
-                      pagination
-                      scopedSlots={{
-                        'status': (item) => (
-                          <td>
-                            {item.status ? 'Active' : 'Non Active'}
-                          </td>
-                        ),
-                        'total produk': (item) => (
-                          <td>
-                            {item.app_product.length}
-                          </td>
-                        ),
-                        'action': (item) => (
-                          <td>
-                            <a >
-                    <span>
-                      <FaEye color="blue"/>
-                    </span>
-                            </a>
-                            <a className={'ml-3'}>
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                            </a>
-                            <a className='ml-3' onClick={()=>{showDelete(item.id)}}>
-                              <span><FaTrashAlt color="red"/></span>
-                            </a>
-                          </td>
-                        )
-                      }}
-                    />
-                  </CRow>
+
+                    <ToolkitProvider
+                      keyField="id"
+                      data={props.discounts}
+                      columns={discountColumns}
+                      search
+                    >
+                      {(props) => (
+                        <div>
+                          <div className="row align-items-center justify-content-between mx-auto">
+                            <SearchBar {...props.searchProps} />
+                            <button
+                              className="col-auto btn btn-success"
+                              onClick={showAddFormToggle}
+                            >
+                              Tambah Baru
+                            </button>
+                          </div>
+                          <BootstrapTable
+                            {...props.baseProps}
+                            // remote
+                            striped
+                            pagination={paginationFactory()}
+                            noDataIndication={() => (
+                              <div>No data found</div>
+                            )}
+                            loading={props.loading}
+                            bootstrap4
+                            bordered={false}
+                            // onTableChange={onTableChange}
+                            overlay={overlayFactory({
+                              spinner: true,
+                              styles: {
+                                overlay: (base) => ({
+                                  ...base,
+                                  background:
+                                    "rgba(192,192,192,0.5)",
+                                }),
+                              },
+                            })}
+                          />
+                        </div>
+                      )}
+                    </ToolkitProvider>
                 </CCol>
               </CRow>
             </CCardBody>

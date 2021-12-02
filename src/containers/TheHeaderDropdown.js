@@ -8,7 +8,7 @@ import {
   CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import {loginDispatch} from "../views/pages/login/loginRedux";
+import {userDispatch} from "../views/pages/login/loginRedux";
 import {useDispatch} from "react-redux";
 import {FaSignOutAlt} from "react-icons/fa";
 
@@ -84,7 +84,7 @@ const TheHeaderDropdown = () => {
           <CBadge color="primary" className="mfs-auto">42</CBadge>
         </CDropdownItem>
         <CDropdownItem divider />
-        <CDropdownItem onClick={()=>{dispatch(loginDispatch.logout())}}>
+        <CDropdownItem onClick={()=>{dispatch(userDispatch.logout())}}>
           <FaSignOutAlt className="mfe-2" />
           Log Out
         </CDropdownItem>

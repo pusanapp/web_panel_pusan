@@ -274,34 +274,34 @@ const _nav = {
     //     },
     //   ],
     // },
-    {
-      _tag: 'CSidebarNavDropdown',
-      name: 'Notifications',
-      route: '/notifications',
-      icon: 'cil-bell',
-      _children: [
-        {
-          _tag: 'CSidebarNavItem',
-          name: 'Alerts',
-          to: '/notifications/alerts',
-        },
-        {
-          _tag: 'CSidebarNavItem',
-          name: 'Badges',
-          to: '/notifications/badges',
-        },
-        {
-          _tag: 'CSidebarNavItem',
-          name: 'Modal',
-          to: '/notifications/modals',
-        },
-        {
-          _tag: 'CSidebarNavItem',
-          name: 'Toaster',
-          to: '/notifications/toaster'
-        }
-      ]
-    },
+    // {
+    //   _tag: 'CSidebarNavDropdown',
+    //   name: 'Notifications',
+    //   route: '/notifications',
+    //   icon: 'cil-bell',
+    //   _children: [
+    //     {
+    //       _tag: 'CSidebarNavItem',
+    //       name: 'Alerts',
+    //       to: '/notifications/alerts',
+    //     },
+    //     {
+    //       _tag: 'CSidebarNavItem',
+    //       name: 'Badges',
+    //       to: '/notifications/badges',
+    //     },
+    //     {
+    //       _tag: 'CSidebarNavItem',
+    //       name: 'Modal',
+    //       to: '/notifications/modals',
+    //     },
+    //     {
+    //       _tag: 'CSidebarNavItem',
+    //       name: 'Toaster',
+    //       to: '/notifications/toaster'
+    //     }
+    //   ]
+    // },
     // {
     //   _tag: 'CSidebarNavItem',
     //   name: 'Widgets',
@@ -411,6 +411,39 @@ const _nav = {
       //   color: 'info',
       //   text: 'NEW',
       // }
+    },
+    {
+      _tag: 'CSidebarNavDropdown',
+      name: 'Transaction',
+      route: '/transaction',
+      icon: <FaShoppingBag className="c-sidebar-nav-icon"/>,
+      _children: [
+        {
+          _tag: 'CSidebarNavItem',
+          name: 'Semua Transaksi',
+          to: '/transaction/all',
+        },
+        {
+          _tag: 'CSidebarNavItem',
+          name: 'Pesanan Baru',
+          to: '/transaction/new',
+        },
+        {
+          _tag: 'CSidebarNavItem',
+          name: 'Pesanan Diproses',
+          to: '/transaction/ready',
+        },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Dalam Pengiriman',
+        //   to: '/transaction/on-delivery',
+        // },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Transaksi Selesai',
+        //   to: '/transaction/done',
+        // },
+      ]
     },
   ]
 }

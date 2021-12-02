@@ -1,6 +1,6 @@
 import {put, takeLatest} from "redux-saga/effects";
 import axios from "axios";
-import {globalUrl, productServiceLocal} from "../../../utils/globalUrl";
+import {globalUrl, productService} from "../../../utils/globalUrl";
 
 const actionTypes = {
   RESET_STATE: 'RESET_STATE',
@@ -116,7 +116,7 @@ export const bannerDispatch = {
 export function* bannerSaga() {
   yield takeLatest(actionTypes.LOAD_ALL_BANNER, function* () {
     try {
-      const {data: response} = yield axios.get(`${globalUrl.productServiceLocal}/api/v1/banner/all`)
+      const {data: response} = yield axios.get(`${globalUrl.productService}/api/v1/banner/all`)
       yield put(bannerDispatch.allBannerLoaded(response.data))
     }catch (e) {
       console.log(e.response)
@@ -131,7 +131,7 @@ export function* bannerSaga() {
       const {data: responseUpload} = yield axios.post(`https://pusanair-dev.xyz/assets-service/banner/upload`, image)
       console.log(responseUpload)
       banner.image_url = responseUpload.data[0]
-      const {data: response} = yield axios.post(`${globalUrl.productServiceLocal}/api/v1/banner/create`, banner)
+      const {data: response} = yield axios.post(`${globalUrl.productService}/api/v1/banner/create`, banner)
       console.log(response)
       yield put(bannerDispatch.newBannerSaved(response.status))
       yield put(bannerDispatch.loadAllBanner())
@@ -144,7 +144,7 @@ export function* bannerSaga() {
   yield takeLatest(actionTypes.DELETE_BANNER, function* (action) {
     const id= action.payload;
     try{
-      const {data: response} = yield axios.delete(`${productServiceLocal}/api/v1/banner/delete/${id}`)
+      const {data: response} = yield axios.delete(`${productService}/api/v1/banner/delete/${id}`)
       console.log(response)
       yield put(bannerDispatch.loadAllBanner())
     }catch (e) {

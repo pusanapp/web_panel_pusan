@@ -18,6 +18,10 @@ import {discountDispatch} from "../product/redux/discountRedux";
 import Select from "react-select";
 import {FaEye, FaPencilAlt, FaTrashAlt} from "react-icons/all";
 import DeleteDialog from "../../reusable/dialogs/DeleteDialog";
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import overlayFactory from "react-bootstrap-table2-overlay";
 
 const AllBannerPage = (props) => {
   const dispatch = useDispatch()
@@ -30,6 +34,8 @@ const AllBannerPage = (props) => {
   const [bannerData, setBannerData] = useState({})
   const [deletedId, setDeletedId] = useState(0)
   const [deleteVisibility, setDeleteVisibility] = useState(false)
+  const { SearchBar } = Search;
+
   const showDeleteDialog = (data) => {
     setDeletedId(data)
     setDeleteVisibility(true)
@@ -123,6 +129,66 @@ const AllBannerPage = (props) => {
     'action'
   ]
 
+  const columns = [
+    {
+      dataField: 'name',
+      text: 'Nama',
+      sort: true,
+    },
+    {
+      dataField: 'banner',
+      text: 'Banner',
+      sort: true,
+      formatter: (cell, row) => {
+        return(
+          <>
+            <img src={row.image_url} alt={'banner'} className='rounded' width={100}/>
+          </>
+        )
+      }
+    },
+    {
+      dataField: 'app_product_discount',
+      text: 'Diskon',
+      formatter: (cell, row) => {
+        return(
+          <>
+            {row.app_product_discount? `${row.app_product_discount.name}`: 'Not Include Discount'}
+          </>
+        )
+      }
+    },
+    {
+      dataField: 'status',
+      text: 'Status',
+      sort: true,
+      formatter: (cell, row) => {
+        return(
+          <>{row.status? 'Active' : 'Not Active'}</>
+        )
+      }
+    },
+    {
+      dataField: 'action',
+      text: 'Action',
+      sort: true,
+      formatter: (cell, row) => {
+        return(
+          <>
+            <a onClick={()=>showEditBannerToggle(row)} >
+                    <span>
+                      <FaPencilAlt color="green"/>
+                    </span>
+            </a>
+            <a className='ml-3' onClick={()=>showDeleteDialog(row.id)}>
+              <span><FaTrashAlt color="red"/></span>
+            </a>
+          </>
+        )
+      }
+    }
+  ]
+
 
   useEffect(()=>{
     props.loadAllBanner()
@@ -167,49 +233,49 @@ const AllBannerPage = (props) => {
               </CToaster>
               <CRow>
                 <CCol>
-                  <CRow className="d-flex justify-content-between align-items-center mx-auto">
-                    <div>
-                      Semua Banner
-                    </div>
-                    <div>
-                      <CButton color={"primary"} onClick={showAddFormToggle}>Tambah Baru</CButton>
-                    </div>
-                  </CRow>
-                  <CRow className="mt-3 mx-auto">
-                    <CDataTable
-                      items={props.banners}
-                      fields={fields}
-                      itemsPerPage={8}
-                      loading={props.loading}
-                      sorter
-                      pagination
-                      scopedSlots={{
-                        'banner': (item) => (
-                          <td>
-                            <img src={item.image_url} alt={'tess'} className='rounded' width={100}/>
-                          </td>
-                        ),
-                        'discount': (item) => (
-                          <td>{item.app_product_discount? `${item.app_product_discount.name}`: 'Not Include Discount'}</td>
-                        ),
-                        'status': (item) => (
-                          <td>{item.status? 'Active' : 'Not Active'}</td>
-                        ),
-                        'action': (item) => (
-                          <td>
-                            <a onClick={()=>showEditBannerToggle(item)} >
-                    <span>
-                      <FaPencilAlt color="green"/>
-                    </span>
-                            </a>
-                            <a className='ml-3' onClick={()=>showDeleteDialog(item.id)}>
-                              <span><FaTrashAlt color="red"/></span>
-                            </a>
-                          </td>
-                        )
-                      }}
-                    />
-                  </CRow>
+                  <ToolkitProvider
+                    keyField="id"
+                    data={props.banners}
+                    columns={columns}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                        <div className="row align-items-center justify-content-between mx-auto">
+                          <SearchBar {...props.searchProps} />
+                          <button
+                            className="col-auto btn btn-success"
+                            onClick={showAddFormToggle}
+                          >
+                            Tambah Baru
+                          </button>
+                        </div>
+                        <BootstrapTable
+                          {...props.baseProps}
+                          // remote
+                          striped
+                          pagination={paginationFactory()}
+                          noDataIndication={() => (
+                            <div>No data found</div>
+                          )}
+                          loading={props.loading}
+                          bootstrap4
+                          bordered={false}
+                          // onTableChange={onTableChange}
+                          overlay={overlayFactory({
+                            spinner: true,
+                            styles: {
+                              overlay: (base) => ({
+                                ...base,
+                                background:
+                                  "rgba(192,192,192,0.5)",
+                              }),
+                            },
+                          })}
+                        />
+                      </div>
+                    )}
+                  </ToolkitProvider>
                 </CCol>
               </CRow>
             </CCardBody>

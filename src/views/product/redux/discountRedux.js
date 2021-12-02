@@ -128,7 +128,7 @@ export const discountDispatch = {
 export function* discountSaga (){
   yield takeLatest(actionTypes.LOAD_ALL_DISCOUNT, function* (){
     try {
-      const {data: response} = yield axios.get(`${globalUrl.productServiceLocal}/api/v1/master/discount/all`)
+      const {data: response} = yield axios.get(`${globalUrl.productService}/api/v1/master/discount/all`)
       console.log(response)
       yield put(discountDispatch.allDiscountLoaded(response.data))
     }catch (e) {
@@ -139,7 +139,7 @@ export function* discountSaga (){
   yield takeLatest(actionTypes.ADD_NEW_DISCOUNT, function* (action) {
     const data = action.payload
     try {
-      const {data: response} = yield axios.post(`${globalUrl.productServiceLocal}/api/v1/master/discount/new`, data)
+      const {data: response} = yield axios.post(`${globalUrl.productService}/api/v1/master/discount/new`, data)
       console.log(response)
       yield put(discountDispatch.newDiscountAdded(response.status))
       yield put(discountDispatch.loadAllDiscount())
@@ -151,7 +151,7 @@ export function* discountSaga (){
   yield takeLatest(actionTypes.DELETE_DISCOUNT, function* (action){
     const id = action.payload;
     try {
-      const {data: response} = yield axios.delete(`${globalUrl.productServiceLocal}/api/v1/master/discount/delete/${id}`)
+      const {data: response} = yield axios.delete(`${globalUrl.productService}/api/v1/master/discount/delete/${id}`)
       console.log(response)
       yield put(discountDispatch.loadAllDiscount())
     }catch (e) {

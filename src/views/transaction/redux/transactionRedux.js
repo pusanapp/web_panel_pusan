@@ -168,7 +168,7 @@ export function* transactionSaga (){
     const id = action.payload.id;
     const data = action.payload.data;
     try{
-      const {data: response} = yield axios.post(`${globalUrl.transactionService}/api/v1/transaction/input-resi/order/${id}`)
+      const {data: response} = yield axios.post(`${globalUrl.transactionService}/api/v1/transaction/input-resi/order/${id}`, data)
       console.log(response)
       yield put(transactionDispatch.inputResiSuccess(response.message))
       yield put(transactionDispatch.loadOnProcessTransaction())

@@ -34,8 +34,8 @@ const Toaster = () => {
   ]
 
   const [toasts, setToasts] = useState([
-    { position: 'static'},
-    { position: 'static'},
+    // { position: 'static'},
+    // { position: 'static'},
     { position: 'top-right', autohide: 3000 }
   ])
 
@@ -47,7 +47,7 @@ const Toaster = () => {
 
   const addToast = () => {
     setToasts([
-      ...toasts, 
+      ...toasts,
       { position, autohide: autohide && autohideValue, closeButton, fade }
     ])
   }
@@ -55,6 +55,8 @@ const Toaster = () => {
 
   const toasters = (()=>{
     return toasts.reduce((toasters, toast) => {
+      console.log('toasters, ',toasters)
+      console.log('tosat, ',toast)
       toasters[toast.position] = toasters[toast.position] || []
       toasters[toast.position].push(toast)
       return toasters
@@ -166,7 +168,7 @@ const Toaster = () => {
                           Toast title
                         </CToastHeader>
                         <CToastBody>
-                          {`This is a toast in ${toasterKey} positioned toaster number ${key + 1}.`}
+                          {`This is a test toast in ${toasterKey} positioned toaster number ${key + 1}.`}
                         </CToastBody>
                       </CToast>
                     )
