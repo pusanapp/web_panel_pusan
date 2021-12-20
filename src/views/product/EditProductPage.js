@@ -107,6 +107,7 @@ const EditProductPage = (props) => {
     setDescription(value)
   }
   const onChangeSpecification = (value) => {
+    console.log(value)
     setSpecification(value)
   }
   const onChangeDetail = (value) => {
@@ -217,7 +218,7 @@ const EditProductPage = (props) => {
                 </CFormGroup>
                 <CFormGroup>
                   <CLabel htmlFor="name">Nama Produk</CLabel>
-                  <CInput id="name" placeholder="Masukkan Nama Produk" defaultValue={hafara.nama_barang} onChange={onChangeName} required/>
+                  <CInput id="name" placeholder="Masukkan Nama Produk" defaultValue={hafara.nama_barang? hafara.nama_barang : 'Haniffff'} onChange={onChangeName} required/>
                 </CFormGroup>
                 <CFormGroup>
                   <CLabel htmlFor="name">Kode</CLabel>
@@ -260,7 +261,7 @@ const EditProductPage = (props) => {
                   <CSelect custom onChange={onchangeProductType}>
                     <option value="">Pilih Jenis Produk</option>
                     {props.types.map(data => (
-                      <option key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
+                      <option selected={data.id === props.product.type_id} key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
                     ))}
 
                   </CSelect>
@@ -269,8 +270,8 @@ const EditProductPage = (props) => {
                   <CLabel htmlFor="name">Pilih Kategori Produk</CLabel>
                   <CSelect custom onChange={onchangeCategory}>
                     <option value="">Pilih Kategori Produk</option>
-                    {groupFilter(props.categories, 'product_type_id', productTypeId).map(data => (
-                      <option key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
+                    {groupFilter(props.categories, 'product_type_id', productTypeId?productTypeId : props.product.type_id).map(data => (
+                      <option selected={data.id===props.product.category_id} key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
                     ))}
 
                   </CSelect>
@@ -279,8 +280,8 @@ const EditProductPage = (props) => {
                   <CLabel htmlFor="name">Pilih Merk Produk</CLabel>
                   <CSelect custom onChange={onChangeBrand}>
                     <option value="">Pilih Merk Produk</option>
-                    {groupFilter(props.brands, 'product_category_id', categoryId).map(data => (
-                      <option key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
+                    {groupFilter(props.brands, 'product_category_id', categoryId? categoryId : props.product.category_id).map(data => (
+                      <option selected={data.id === props.product.brand_id} key={data.id} value={`${data.id}|${data.name}`}>{data.name}</option>
                     ))}
 
                   </CSelect>
@@ -311,7 +312,7 @@ const EditProductPage = (props) => {
                   <CLabel htmlFor="name">Spesifikasi</CLabel>
 
                   <div>
-                    <ReactQuill className={"px-1"} theme="snow" onChange={onChangeSpecification}/>
+                    <ReactQuill className={"px-1"} theme="snow" onChange={onChangeSpecification} defaultValue={props.product.specification}/>
                   </div>
 
                 </CFormGroup>
@@ -387,6 +388,7 @@ const mapStateToProps = (state) => {
     types: state.master.types,
     brands: state.master.brands,
     combos: state.combo.combos,
+    product: state.product.product
   }
 }
 

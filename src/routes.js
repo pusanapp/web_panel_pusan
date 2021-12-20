@@ -117,13 +117,15 @@ const routes = {
   ],
   sales: [
     {path: '/dashboard', name: 'Dashboard', component: Dashboard},
+    {path: '/pusan/products', exact: true, name: 'Semua Produk', component: AllProduct},
     {path: '/transaction/all', exact: true, name: 'Semua Transacksi', component: AllTransactionPage},
     {path: '/transaction/new', exact: true, name: 'Pesanan Baru', component: NewOrderPage},
     {path: '/transaction/done', exact: true, name: 'Transaksi Selesai', component: DoneTransactionPage},
-    {path: '/transaction/ready', exact: true, name: 'Pesanan Diproses', component: InputResiPage},
+    // {path: '/transaction/ready', exact: true, name: 'Pesanan Diproses', component: InputResiPage},
   ],
   gudang: [
     {path: '/dashboard', name: 'Dashboard', component: Dashboard},
+    {path: '/pusan/products', exact: true, name: 'Semua Produk', component: AllProduct},
     {path: '/transaction/ready', exact: true, name: 'Pesanan Diproses', component: InputResiPage},
   ]
 

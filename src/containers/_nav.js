@@ -414,6 +414,29 @@ const _nav = {
     },
     {
       _tag: 'CSidebarNavDropdown',
+      name: 'Produk',
+      route: '/pusan',
+      icon: <FaStore className="c-sidebar-nav-icon"/>,
+      _children: [
+        {
+          _tag: 'CSidebarNavItem',
+          name: 'Semua Produk',
+          to: '/pusan/products',
+        },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Combo Produk',
+        //   to: '/pusan/products/combo',
+        // },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Diskon',
+        //   to: '/pusan/products/discount',
+        // },
+      ]
+    },
+    {
+      _tag: 'CSidebarNavDropdown',
       name: 'Transaction',
       route: '/transaction',
       icon: <FaShoppingBag className="c-sidebar-nav-icon"/>,
@@ -428,6 +451,74 @@ const _nav = {
           name: 'Pesanan Baru',
           to: '/transaction/new',
         },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Pesanan Diproses',
+        //   to: '/transaction/ready',
+        // },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Dalam Pengiriman',
+        //   to: '/transaction/on-delivery',
+        // },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Transaksi Selesai',
+        //   to: '/transaction/done',
+        // },
+      ]
+    },
+  ],
+  gudang: [
+    {
+      _tag: 'CSidebarNavItem',
+      name: 'Dashboard',
+      to: '/dashboard',
+      icon: <FaHome className="c-sidebar-nav-icon"/>,
+      // badge: {
+      //   color: 'info',
+      //   text: 'NEW',
+      // }
+    },
+    {
+      _tag: 'CSidebarNavDropdown',
+      name: 'Produk',
+      route: '/pusan',
+      icon: <FaStore className="c-sidebar-nav-icon"/>,
+      _children: [
+        {
+          _tag: 'CSidebarNavItem',
+          name: 'Semua Produk',
+          to: '/pusan/products',
+        },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Combo Produk',
+        //   to: '/pusan/products/combo',
+        // },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Diskon',
+        //   to: '/pusan/products/discount',
+        // },
+      ]
+    },
+    {
+      _tag: 'CSidebarNavDropdown',
+      name: 'Transaction',
+      route: '/transaction',
+      icon: <FaShoppingBag className="c-sidebar-nav-icon"/>,
+      _children: [
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Semua Transaksi',
+        //   to: '/transaction/all',
+        // },
+        // {
+        //   _tag: 'CSidebarNavItem',
+        //   name: 'Pesanan Baru',
+        //   to: '/transaction/new',
+        // },
         {
           _tag: 'CSidebarNavItem',
           name: 'Pesanan Diproses',
