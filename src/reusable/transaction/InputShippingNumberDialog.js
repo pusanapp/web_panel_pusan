@@ -62,6 +62,11 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
             <div style={{
               wordWrap: 'break-word'
             }}>{transaction.address}</div>
+            <Row className='justify-content-start mx-auto'>
+              <button onClick={()=>{
+                window.open(`https://pusanair-dev.xyz/transaction-service/api/v1/transaction/export/invoice/${transaction.invoice_number}`,'_blank')
+              }} className='btn btn-outline-success'>Download Invoice</button>
+            </Row>
           </Col>
           <Col lg={4} sm={12}>
             <Row className='justify-content-end mx-auto'>
