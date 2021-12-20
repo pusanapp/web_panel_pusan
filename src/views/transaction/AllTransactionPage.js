@@ -27,6 +27,7 @@ import overlayFactory from "react-bootstrap-table2-overlay";
 import ToolkitProvider, {Search} from "react-bootstrap-table2-toolkit";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {statusMapper} from "../../utils/statusMapper";
 
 const AllTransactionPage = (props) =>{
   const [viewVisibility, setViewVisibility] = useState(false)
@@ -76,6 +77,11 @@ const AllTransactionPage = (props) =>{
       text: 'Invoice',
     },
     {
+      dataField: 'customer_name',
+      text: 'Pembeli',
+      sort: true
+    },
+    {
       dataField: 'payment_method',
       text: 'Metode Pembayaran',
       sort: true
@@ -110,6 +116,11 @@ const AllTransactionPage = (props) =>{
       dataField: 'status',
       text: 'Status Pesanan',
       sort: true,
+      formatter: (cell, row) => {
+        return(
+          <>{statusMapper(row.status)}</>
+        )
+      }
     }
   ]
   const rowEvents = {
@@ -144,8 +155,8 @@ const AllTransactionPage = (props) =>{
             <CCol>
               <ToolkitProvider
                 keyField="id"
-                data={props.transactions}
-                // data={groupFilterStatus(props.transactions,'status',filterStatus)}
+                // data={props.transactions}
+                data={groupFilterStatus(props.transactions,'status',filterStatus)}
                 columns={columns}
                 search
               >

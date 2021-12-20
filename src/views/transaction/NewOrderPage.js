@@ -11,6 +11,7 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import overlayFactory from "react-bootstrap-table2-overlay";
 import ToolkitProvider, {Search} from "react-bootstrap-table2-toolkit";
+import {statusMapper} from "../../utils/statusMapper";
 const NewOrderPage = (props) =>{
   const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
   const [confirmationDialogVisibility, setConfirmationDialogVisibility] = useState(false)
@@ -31,6 +32,11 @@ const NewOrderPage = (props) =>{
     {
       dataField: 'invoice_number',
       text: 'Invoice',
+    },
+    {
+      dataField: 'customer_name',
+      text: 'Pembeli',
+      sort: true
     },
     {
       dataField: 'payment_method',
@@ -67,6 +73,11 @@ const NewOrderPage = (props) =>{
       dataField: 'status',
       text: 'Status Pesanan',
       sort: true,
+      formatter: (cell, row) => {
+        return(
+          <>{statusMapper(row.status)}</>
+        )
+      }
     }
   ]
 
@@ -96,7 +107,7 @@ const NewOrderPage = (props) =>{
       <ConfirmationOrderDialog submit={submitConfirm} show={confirmationDialogVisibility} onHide={hideDialog} transaction={transaction}/>
       <CCard>
         <CCardHeader>
-          Pesanan Baru
+          Konfirmasi Pesanan
         </CCardHeader>
         <CCardBody>
           <CRow>

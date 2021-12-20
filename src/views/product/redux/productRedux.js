@@ -18,6 +18,9 @@ const action = {
   UPDATE_PRODUCT: 'UPDATE_PRODUCT',
   PRODUCT_UPDATED: 'PRODUCT_UPDATED' ,
   DELETE_PRODUCT: 'DELETE_PRODUCT',
+
+  LOAD_PRODUCT_BY_ID: 'LOAD_PRODUCT_BY_ID',
+  PRODUCT_BY_ID_LOADED: 'PRODUCT_BY_ID_LOADED'
 }
 
 const initialState = {
@@ -25,7 +28,8 @@ const initialState = {
   hafara: [],
   loading: false,
   status: false,
-  error: ''
+  error: '',
+  product: {}
 }
 
 export const productReducer = (state=initialState, {type, payload}) =>{
@@ -94,7 +98,19 @@ export const productReducer = (state=initialState, {type, payload}) =>{
         status: payload
       }
     }
-
+    case action.LOAD_PRODUCT_BY_ID: {
+      return {
+        ...state,
+        loading: true,
+      }
+    }
+    case action.PRODUCT_BY_ID_LOADED: {
+      return {
+        ...state,
+        loading: false,
+        product: payload
+      }
+    }
     default:
       return {...state}
   }
@@ -111,7 +127,9 @@ export const productDispatch = {
   updateProduct:(data)=>({type: action.UPDATE_PRODUCT, payload:data}),
   productUpdated: (data) => ({type: action.PRODUCT_UPDATED, payload: data}),
   deleteProduct: (data) => ({type: action.DELETE_PRODUCT, payload: data}),
-  productError: (data) => ({type: action.PRODUCT_ERROR, payload: data})
+  productError: (data) => ({type: action.PRODUCT_ERROR, payload: data}),
+  loadProductById: (data) => ({type: action.LOAD_PRODUCT_BY_ID, payload: data}),
+  productByIdLoaded: (data) => ({type: action.PRODUCT_BY_ID_LOADED, payload: data})
 }
 
 export function* productSaga (){
@@ -176,6 +194,17 @@ export function* productSaga (){
       const {data: response} = yield axios.delete(`${globalUrl.productService}/api/v1/pusan/product/delete/${id}`)
       console.log(response)
       yield put(productDispatch.loadAllProduct())
+    }catch (err){
+      console.log(err.response)
+      yield put(productDispatch.productError(err.message))
+    }
+  })
+
+  yield takeLatest(action.LOAD_PRODUCT_BY_ID, function* ({payload}) {
+    try {
+      const {data: response} = yield axios.get(`http://127.0.0.1:4002/api/v1/pusan/product/find/${payload}`)
+      console.log(response)
+      yield put(productDispatch.productByIdLoaded(response.data))
     }catch (err){
       console.log(err.response)
       yield put(productDispatch.productError(err.message))

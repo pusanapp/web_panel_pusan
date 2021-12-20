@@ -50,12 +50,12 @@ const _nav = {
         },
         {
           _tag: 'CSidebarNavItem',
-          name: 'Pesanan Baru',
+          name: 'Konfirmasi Pesanan',
           to: '/transaction/new',
         },
         {
           _tag: 'CSidebarNavItem',
-          name: 'Pesanan Diproses',
+          name: 'Input Resi',
           to: '/transaction/ready',
         },
         // {

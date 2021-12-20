@@ -10,6 +10,7 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import overlayFactory from "react-bootstrap-table2-overlay";
 import convertRupiah from "rupiah-format";
+import {statusMapper} from "../../utils/statusMapper";
 
 const InputResiPage = (props) =>{
   const fields = ['date','invoice_number','payment_method', 'total_amount', 'payment_status', 'status']
@@ -31,6 +32,11 @@ const InputResiPage = (props) =>{
     {
       dataField: 'invoice_number',
       text: 'Invoice',
+    },
+    {
+      dataField: 'customer_name',
+      text: 'Pembeli',
+      sort: true
     },
     {
       dataField: 'payment_method',
@@ -67,6 +73,11 @@ const InputResiPage = (props) =>{
       dataField: 'status',
       text: 'Status Pesanan',
       sort: true,
+      formatter: (cell, row) => {
+        return(
+          <>{statusMapper(row.status)}</>
+        )
+      }
     }
   ]
 
@@ -100,7 +111,7 @@ const InputResiPage = (props) =>{
       <InputShippingNumberDialog show={inputDialogVisibility} transaction={transaction} onHide={hideDialog} submit={submitConfirm}/>
       <CCard>
         <CCardHeader>
-          Pesanan Diproses
+          Input Resi
         </CCardHeader>
         <CCardBody>
           <CRow>

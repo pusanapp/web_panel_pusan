@@ -15,10 +15,14 @@ import moment from "moment";
 import "moment/locale/id"
 import convertRupiah from "rupiah-format";
 import {Modal, Row, Col, Table} from 'react-bootstrap'
+import {statusMapper} from "../../utils/statusMapper";
 
 const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
   const [resi, setResi] = useState('')
-  let total = 0
+  let subTotal = 0;
+  let specialPrice = 0;
+  let total = 0;
+  let type = '';
 
   const onChangeInput = (event) => {
     setResi(event.target.value)
@@ -43,7 +47,7 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
             <div><p>Tanggal dibuat : {moment(transaction.createdAt).format('lll')}</p></div>
 
           </Col>
-          <div className='mt-3 mr-3 d-flex'><p className='bg-success px-5 py-1 rounded'>Menunggu</p></div>
+          <div className='mt-3 mr-3'><p className='bg-behance px-2 py-1 rounded'>{statusMapper(transaction.status)}</p></div>
         </Row>
         <Row className='mx-auto bg-gray-100 mt-3 align-items-center rounded'>
           <Col className='pt-1'>
@@ -52,6 +56,7 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
         </Row>
         <Row className='mx-auto align-items-start justify-content-between'>
           <Col lg={8} sm={12} className='flex-wrap'>
+            <div>Alamat Pengiriman : </div>
             <div>{transaction.customer_name}</div>
             <div>{transaction.phone_number}</div>
             <div style={{
@@ -60,10 +65,13 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
           </Col>
           <Col lg={4} sm={12}>
             <Row className='justify-content-end mx-auto'>
-              <div>Kurir : {transaction.shipping_expedition_service}</div>
+              <div>Metode Pembayaran : {transaction.payment_method}</div>
             </Row>
             <Row className='justify-content-end mx-auto'>
-              <div>Metode Pembayaran : {transaction.payment_method}</div>
+              <div>Status Pembayaran : {transaction.payment_status}</div>
+            </Row>
+            <Row className='justify-content-end mx-auto'>
+              <div>Kurir : {transaction.shipping_expedition_service}</div>
             </Row>
           </Col>
         </Row>
@@ -73,46 +81,107 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
               <Table striped bordered hover size="sm">
                 <thead>
                 <tr>
-                  <th>Kode</th>
-                  <th>Nama Produk</th>
-                  <th>Qty</th>
-                  <th>Harga</th>
-                  <th>Total</th>
+                  <th style={{
+                    'textAlign': 'center'
+                  }}>Kode</th>
+                  <th style={{
+                    'textAlign': 'center'
+                  }}>Nama Produk</th>
+                  <th style={{
+                    'textAlign': 'center'
+                  }}>Qty</th>
+                  <th style={{
+                    'textAlign': 'center'
+                  }}>Harga</th>
+                  <th style={{
+                    'textAlign': 'center'
+                  }}>Harga Spesial</th>
+                  <th style={{
+                    'textAlign': 'center'
+                  }}>Total</th>
                 </tr>
                 </thead>
                 <tbody>
-                {transaction.transaction_product.map(data=>{
-                  total += data.total
+                {transaction.transaction_product.map(product=>{
+                  if(product.discount_price){
+                    total = product.product_qty*product.discount_price
+                    subTotal += total
+                    specialPrice = product.discount_price
+                    type = '(Diskon)'
+                  }else if(product.combo_price){
+                    total = product.product_qty*product.combo_price
+                    subTotal += total
+                    specialPrice = product.combo_price
+                    type = '(Combo)'
+
+                  }else if(product.grosir_price){
+                    total = product.product_qty*product.grosir_price
+                    subTotal += total
+                    specialPrice = product.grosir_price
+                    type = '(Grosir)'
+                  }else {
+                    total = product.product_qty * product.product_price
+                    subTotal += total
+                    specialPrice = 0
+                    type = ''
+                  }
                   return(
-                    <tr key={data.id}>
-                      <td>{data.product_code}</td>
-                      <td>{data.product_name}</td>
-                      <td>{data.product_qty}</td>
-                      <td>{convertRupiah.convert(data.product_price)}</td>
-                      <td>{convertRupiah.convert(data.total)}</td>
+                    <tr key={product.id}>
+                      <td style={{
+                        'textAlign': 'center'
+                      }}>{product.product_code}</td>
+                      <td>{product.product_name}</td>
+                      <td style={{
+                        'textAlign': 'center'
+                      }}>{product.product_qty}</td>
+                      <td style={{
+                        'textAlign': 'center'
+                      }}>{convertRupiah.convert(product.product_price)}</td>
+                      <td style={{
+                        'textAlign': 'center'
+                      }}>{type} {convertRupiah.convert(specialPrice)}</td>
+                      <td style={{
+                        'textAlign': 'right'
+                      }}>{convertRupiah.convert(total)}</td>
                     </tr>
                   )
                 })}
 
                 <tr>
-                  <td colSpan="3"></td>
-                  <td >Sub Total</td>
-                  <td>{convertRupiah.convert(total)}</td>
+                  <td colSpan="4"></td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>Sub Total</td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>{convertRupiah.convert(subTotal)}</td>
                 </tr>
                 <tr>
-                  <td colSpan="3"></td>
-                  <td >Ongkos Kirim</td>
-                  <td>{convertRupiah.convert(transaction.shipping_cost)}</td>
+                  <td colSpan="4"></td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>Ongkos Kirim</td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>{convertRupiah.convert(transaction.shipping_cost)}</td>
                 </tr>
                 <tr>
-                  <td colSpan="3"></td>
-                  <td >Administrasi</td>
-                  <td>{convertRupiah.convert(transaction.administrative_cost)}</td>
+                  <td colSpan="4"></td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>Administrasi</td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>{convertRupiah.convert(transaction.administrative_cost)}</td>
                 </tr>
                 <tr>
-                  <td colSpan="3"></td>
-                  <td ><h5>Total</h5></td>
-                  <td>{convertRupiah.convert(transaction.total_amount)}</td>
+                  <td colSpan="4"></td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}><h5>Total</h5></td>
+                  <td style={{
+                    'textAlign': 'right'
+                  }}>{convertRupiah.convert(transaction.total_amount)}</td>
                 </tr>
                 </tbody>
               </Table>
@@ -125,7 +194,7 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
           <Col>
             <div>Catatan</div>
             <div className='border p-2 rounded' style={{
-              minHeight: '100px',
+              minHeight: '50px',
               wordWrap: 'break-word'
             }}>{transaction.note}</div>
           </Col>
@@ -139,25 +208,30 @@ const InputShippingNumberDialog =({show, transaction, onHide, submit}) =>{
         </Row>
       </Modal.Body>
       <Modal.Footer>
-        <CButton color="danger" onClick={()=>{
-          onHide()
-          resetState()
-        }}>Batal</CButton>{' '}
-        <CButton
-          color="success"
-          onClick={()=>{
-            const data = {
-              shipping_number: resi
-            }
-            if(resi){
-              console.log(data)
-              submit(data)
-            }else {
-              alert('Tolong masukkan resi pengiriman')
-            }
-            resetState()
-          }}
-        >Konfirmasi</CButton>
+        <div className='col'>
+          <div className='row mx-auto justify-content-end'>
+            <CButton className='mr-2' color="danger" onClick={()=>{
+              onHide()
+              resetState()
+            }}>Batal</CButton>{' '}
+            <CButton
+              color="success"
+              onClick={()=>{
+                const data = {
+                  shipping_number: resi
+                }
+                if(resi){
+                  console.log(data)
+                  submit(data)
+                }else {
+                  alert('Tolong masukkan resi pengiriman')
+                }
+                resetState()
+              }}
+            >Konfirmasi</CButton>
+          </div>
+
+        </div>
       </Modal.Footer>
     </Modal>
   )

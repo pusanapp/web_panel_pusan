@@ -18,7 +18,7 @@ import MainChartExample from '../charts/MainChartExample.js'
 import {connect} from "react-redux";
 import {tesAction} from "../../redux/tesRedux";
 
-const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown.js'))
+const WidgetsDropdown = lazy(() => import('../widgets/WidgetsDropdown'))
 const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 
 const Dashboard = (props) => {
@@ -113,7 +113,7 @@ const Dashboard = (props) => {
         </CCardFooter>
       </CCard>
 
-      <WidgetsBrand withCharts/>
+      {/*<WidgetsBrand withCharts/>*/}
 
       <CRow>
         <CCol>

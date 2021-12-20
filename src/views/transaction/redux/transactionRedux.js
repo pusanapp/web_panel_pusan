@@ -1,6 +1,7 @@
 import {put, takeLatest} from "redux-saga/effects";
 import axios from "axios";
 import {globalUrl} from "../../../utils/globalUrl";
+import {func} from "prop-types";
 
 const actionType = {
   LOAD_ALL_TRANSACTION: 'LOAD_ALL_TRANSACTION',
@@ -16,12 +17,23 @@ const actionType = {
   INPUT_RESI: 'INPUT_RESI',
   INPUT_RESI_SUCCESS: 'INPUT_RESI_SUCCESS',
   FINISH_TRANSACTION: 'FINISH_TRANSACTION',
-  FINISH_TRANSACTION_SUCCESS: 'FINISH_TRANSACTION_SUCCESS'
-
+  FINISH_TRANSACTION_SUCCESS: 'FINISH_TRANSACTION_SUCCESS',
+  RESET_FINISH_STATE: 'RESET_FINISH_STATE',
+  TRACK_DELIVERY: 'TRACK_DELIVERY',
+  TRACK_DELIVERY_DONE: 'TRACK_DELIVERY_DONE',
+  RESET_TRACKING_STATE: 'RESET_TRACKING_STATE',
+  CHECK_HAS_FINISH: 'CHECK_HAS_FINISH',
+  CHECK_HAS_FINISH_DONE: 'CHECK_HAS_FINISH_DONE'
 }
 
 const initialState = {
   transactions: [],
+  tracking_status: false,
+  tracking_data: undefined,
+  tracking_loading: false,
+  finish_status: false,
+  has_done: true,
+  has_done_loading: false,
   new_orders: [],
   done_transactions: [],
   on_process_transactions: [],
@@ -31,6 +43,54 @@ const initialState = {
 
 export const transactionReducer = (state = initialState, {type,payload}) =>{
   switch (type){
+    case actionType.TRACK_DELIVERY: {
+      return {
+        ...state,
+        tracking_loading: true,
+      }
+    }
+    case actionType.TRACK_DELIVERY_DONE: {
+      return {
+        ...state,
+        tracking_loading: false,
+        tracking_data: payload.data,
+        tracking_status: payload.status
+      }
+    }
+    case actionType.RESET_TRACKING_STATE: {
+      return{
+        ...state,
+        tracking_status: false,
+        tracking_data: undefined,
+        tracking_loading: false,
+        has_done: true,
+      }
+    }
+    case actionType.FINISH_TRANSACTION_SUCCESS: {
+      return {
+        ...state,
+        finish_status: payload
+      }
+    }
+    case actionType.RESET_FINISH_STATE: {
+      return {
+        ...state,
+        finish_status: false
+      }
+    }
+    case actionType.CHECK_HAS_FINISH: {
+      return {
+        ...state,
+        has_done_loading: true
+      }
+    }
+    case actionType.CHECK_HAS_FINISH_DONE: {
+      return {
+        ...state,
+        has_done: payload,
+        has_done_loading: false
+      }
+    }
     case actionType.LOAD_ALL_TRANSACTION: {
       return {
         ...state,
@@ -112,10 +172,41 @@ export const transactionDispatch = {
   orderConfirmation: (data) =>({type: actionType.ORDER_CONFIRMATION, payload: data}),
   orderConfirmationSuccess: (data) => ({type: actionType.ORDER_CONFIRMATION_SUCCESS}),
   inputResi: (data) =>({type: actionType.INPUT_RESI, payload: data}),
-  inputResiSuccess: (data) =>({type: actionType.INPUT_RESI_SUCCESS})
+  inputResiSuccess: (data) =>({type: actionType.INPUT_RESI_SUCCESS}),
+  trackDelivery: (data) => ({type: actionType.TRACK_DELIVERY, payload: data}),
+  trackDeliveryDone: (data) => ({type: actionType.TRACK_DELIVERY_DONE, payload: data}),
+  resetTrackingState: () => ({type: actionType.RESET_TRACKING_STATE}),
+  finishTransaction: (data) => ({type: actionType.FINISH_TRANSACTION, payload: data}),
+  finishTransactionSuccess: (data) => ({type: actionType.FINISH_TRANSACTION_SUCCESS, payload: data}),
+  resetFinishState: () => ({type: actionType.RESET_FINISH_STATE}),
+  checkHasFinish: (data) => ({type: actionType.CHECK_HAS_FINISH, payload: data}),
+  checkHasFinishDone: (data) => ({type: actionType.CHECK_HAS_FINISH_DONE, payload: data})
 }
 
 export function* transactionSaga (){
+  yield takeLatest(actionType.TRACK_DELIVERY, function* ({payload}) {
+    console.log('payload, ',payload)
+    console.log(`${globalUrl.transactionService}/api/v1/waybill/track/${payload.service}/${payload.waybill}`)
+    const {data: response} = yield axios.get(`https://pusanair-dev.xyz/transaction-service/api/v1/waybill/track/${payload.service}/${payload.waybill}`)
+    console.log(response)
+    yield put(transactionDispatch.trackDeliveryDone(response))
+
+  })
+  yield takeLatest(actionType.FINISH_TRANSACTION, function* ({payload}) {
+    const data =
+    {
+      status: "complete",
+      user: "pusan"
+    }
+    const {data: response} = yield axios.post(`${globalUrl.transactionService}/api/v1/transaction/done/confirmation/transaction/${payload}`, data)
+    console.log(response)
+    yield put(transactionDispatch.finishTransactionSuccess(response.status))
+  })
+  yield takeLatest(actionType.CHECK_HAS_FINISH,function* ({payload}){
+    const {data: response} = yield axios.get(`${globalUrl.transactionService}/api/v1/transaction/has-done/confirmation/${payload}/pusan`)
+    console.log(response)
+    yield put(transactionDispatch.checkHasFinishDone(response.status))
+  })
   yield takeLatest(actionType.LOAD_ALL_TRANSACTION, function* (action) {
     try{
       const {data: response} = yield axios.get(`${globalUrl.transactionService}/api/v1/transaction/all/`)
