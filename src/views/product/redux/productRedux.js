@@ -202,7 +202,7 @@ export function* productSaga (){
 
   yield takeLatest(action.LOAD_PRODUCT_BY_ID, function* ({payload}) {
     try {
-      const {data: response} = yield axios.get(`http://127.0.0.1:4002/api/v1/pusan/product/find/${payload}`)
+      const {data: response} = yield axios.get(`${globalUrl.productService}/api/v1/pusan/product/find/${payload}`)
       console.log(response)
       yield put(productDispatch.productByIdLoaded(response.data))
     }catch (err){
